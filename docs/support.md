@@ -52,3 +52,16 @@ are not included. Regenerate modules with `dart run build_runner build` in
 The example has two launch entrypoints. Its widget tests exercise the same flow
 with both, including ChangeNotifier-driven rendering and cleanup after navigation.
 Business classes and presentation widgets do not import Factory.
+
+## Final verification record
+
+The final implementation passed 54 behavioral tests: 22 core, 15 Flutter adapter,
+14 generator and 3 example tests. Static analysis is clean in each package.
+Runtime tests were repeated on the exact declared minimum Dart 3.3.0 / Flutter
+3.19.0; generator tests passed on its Dart 3.11.0 minimum. Current development
+checks used Flutter 3.44.0 / Dart 3.12.0.
+
+Regenerating the example modules produces no tracked diff. The final code builds
+for web and for macOS debug. The [two-axis review](review.md) records findings,
+regressions and their verified corrections. Hosted CI and the remaining native
+platform builds have not been executed by this local validation.

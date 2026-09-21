@@ -12,8 +12,12 @@ Public test seams already approved in Q35 and specification.md:
 
 Implementation uses vertical red/green slices at these seams. The runtime is
 split into a Dart core and a Flutter/Provider adapter; generation is optional.
-SDK lower bounds are candidates until verified. No platform support is claimed
-solely from the presence of platform scaffolding.
+SDK lower bounds have been checked independently; see `../support.md` for the
+exact versions and results. No platform support is claimed solely from the
+presence of platform scaffolding.
 
 Review compares the implementation with the baseline and the approved local spec;
 there is no external issue tracker for this new repository.
+
+Implementation and corrective commits: `ba211c3`, `110937b`, `f04ae41`.
+The two-axis review and its resolved findings are recorded in `../review.md`.

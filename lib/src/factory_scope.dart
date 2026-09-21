@@ -60,6 +60,8 @@ class FactoryScope extends StatefulWidget {
 class _FactoryScopeState extends State<FactoryScope> {
   FactoryContainer? _container;
   FactoryContainer? _parent;
+  late final List<FactoryModule> _installedModules;
+  late final List<Factory<Object>> _installedLocal;
 
   @override
   void didChangeDependencies() {
@@ -74,6 +76,8 @@ class _FactoryScopeState extends State<FactoryScope> {
         parent: parent,
         observe: _observeListenable,
       );
+      _installedModules = List<FactoryModule>.of(widget.modules);
+      _installedLocal = List<Factory<Object>>.of(widget.local);
     } else if (!identical(_parent, parent)) {
       throw StateError(
           'A FactoryScope cannot move below a different parent scope.');
@@ -83,15 +87,13 @@ class _FactoryScopeState extends State<FactoryScope> {
   @override
   void didUpdateWidget(covariant FactoryScope oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.overrides, widget.overrides)) {
-      _container!.setOverrides(widget.overrides);
-    }
-    if (!_sameModules(oldWidget.modules, widget.modules) ||
-        !_sameReferences(oldWidget.local, widget.local)) {
+    if (!_sameModules(_installedModules, widget.modules) ||
+        !_sameReferences(_installedLocal, widget.local)) {
       throw StateError(
         'FactoryScope modules and local declarations cannot change after mounting.',
       );
     }
+    _container!.setOverrides(widget.overrides);
   }
 
   @override

@@ -200,6 +200,68 @@ void main() {
     expect(find.text('second'), findsOneWidget);
   });
 
+  testWidgets('applies changes made to a reused overrides list',
+      (tester) async {
+    final token = Factory<_Token>.external();
+    final overrides = <FactoryOverride>[
+      token.overrideWithValue(_Token('first')),
+    ];
+
+    Widget scope() => FactoryScope(
+          modules: [
+            FactoryModule(factories: [token], expose: [token])
+          ],
+          overrides: overrides,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Builder(
+              builder: (context) => Text(context.watch<_Token>().value),
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(scope());
+    expect(find.text('first'), findsOneWidget);
+    overrides[0] = token.overrideWithValue(_Token('second'));
+    await tester.pumpWidget(scope());
+    expect(find.text('second'), findsOneWidget);
+  });
+
+  testWidgets('rejects a changed configuration before applying its overrides',
+      (tester) async {
+    final token = Factory<_Token>.external();
+    final modules = <FactoryModule>[
+      FactoryModule(factories: [token], expose: [token]),
+    ];
+    final overrides = <FactoryOverride>[
+      token.overrideWithValue(_Token('first')),
+    ];
+    FactoryContainer? container;
+
+    Widget scope() => FactoryScope(
+          modules: modules,
+          overrides: overrides,
+          child: Directionality(
+            textDirection: TextDirection.ltr,
+            child: Builder(
+              builder: (context) {
+                container = FactoryScope.of(context);
+                return Text(context.watch<_Token>().value);
+              },
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(scope());
+    expect(find.text('first'), findsOneWidget);
+    modules.add(FactoryModule(factories: const [], expose: const []));
+    overrides[0] = token.overrideWithValue(_Token('second'));
+
+    await tester.pumpWidget(scope());
+    expect(tester.takeException(), isA<StateError>());
+    expect(container!.read(token).value, 'first');
+  });
+
   testWidgets('keeps a unique exposed value across unrelated scope rebuilds',
       (tester) async {
     var created = 0;

@@ -54,6 +54,7 @@ class Factory<T extends Object> {
   /// The explicit response when a watched dependency changes.
   final ChangePolicy? onChange;
   final FutureOr<void> Function(T value)? _dispose;
+  bool get _hasDispose => _dispose != null;
   FutureOr<void> _release(Object value) => _dispose?.call(value as T);
   Object _construct(FactoryRef ref) {
     if (_create == null) throw StateError('$this needs an external value.');

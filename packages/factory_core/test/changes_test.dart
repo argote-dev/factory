@@ -13,6 +13,49 @@ class Signal {
 }
 
 void main() {
+  test('overrides never recreate historical unique values without a resolution',
+      () async {
+    final released = <Object>[];
+    var replacements = 0;
+    final source = Factory<Object>((_) => Object(),
+        lifetime: Lifetime.unique, dispose: released.add);
+    final container = FactoryContainer(modules: [
+      FactoryModule(factories: [source])
+    ]);
+    final first = container.read(source);
+    final second = container.read(source);
+    container.setOverrides([
+      source.overrideWith((_) {
+        replacements++;
+        return Object();
+      }, dispose: released.add)
+    ]);
+    expect(replacements, 0);
+    final third = container.read(source);
+    expect(replacements, 1);
+    await container.close();
+    expect(released.toSet(), {first, second, third});
+    expect(released.length, 3);
+  });
+
+  test('cleanup-free unique resolutions still receive declaration invalidation',
+      () async {
+    final source = Factory<Object>((_) => Object(), lifetime: Lifetime.unique);
+    final container = FactoryContainer(modules: [
+      FactoryModule(factories: [source])
+    ]);
+    container.read(source);
+    container.read(source);
+    var events = 0;
+    final remove = container.addListener((factory) {
+      if (identical(factory, source)) events++;
+    });
+    container.setOverrides([source.overrideWithValue(Object())]);
+    expect(events, 1);
+    remove();
+    await container.close();
+  });
+
   test('observed unique failures recover after a later override', () async {
     final source = Factory<int>((_) => 1, lifetime: Lifetime.unique);
     final target = Factory<List<int>>((ref) => [ref.watch(source)],

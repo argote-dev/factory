@@ -87,7 +87,18 @@ class FactoryContainer {
   }
 
   /// Resolves a declaration in its owning scope.
-  T read<T extends Object>(Factory<T> factory) => _resolve(factory).value as T;
+  T read<T extends Object>(Factory<T> factory) {
+    final record = _resolve(factory);
+    final value = record.value as T;
+    // A direct, cleanup-free unique resolution has no scope-owned lifecycle.
+    // Internal graph reads retain their edges for observation and cleanup order.
+    if (factory.lifetime == Lifetime.unique &&
+        record.release == null &&
+        record.watches.isEmpty) {
+      record.owner._records.remove(record);
+    }
+    return value;
+  }
 
   _Record _resolve(Factory<Object> factory) {
     final owner = _owner(factory);
@@ -138,7 +149,7 @@ class FactoryContainer {
         record.release = override?._value != null
             ? null
             : override == null
-                ? factory._release
+                ? (factory._hasDispose ? factory._release : null)
                 : override._dispose;
         record.value = override?._value ??
             override?._create?.call(ref) ??
@@ -174,6 +185,7 @@ class FactoryContainer {
       next[override.factory] = override;
     }
     final changed = <_Record>{};
+    final declarations = <Factory<Object>>{};
     for (final factory in {..._overrides.keys, ...next.keys}) {
       final before = _overrides[factory];
       final after = next[factory];
@@ -181,6 +193,7 @@ class FactoryContainer {
       if (before?._value != null && identical(before?._value, after?._value)) {
         continue;
       }
+      declarations.add(factory);
       for (final record in _records.where((record) =>
           !record.isRetired && identical(record.factory, factory))) {
         record.forceRecreate = true;
@@ -191,6 +204,14 @@ class FactoryContainer {
       ..clear()
       ..addAll(next);
     _propagate(changed);
+    // Direct unique values may already have been released from bookkeeping.
+    // Declaration listeners still need one invalidation, without creating values.
+    for (final factory in declarations) {
+      if (changed.any((record) => identical(record.factory, factory))) continue;
+      for (final listener in _listeners.toList()) {
+        listener(factory);
+      }
+    }
   }
 
   /// Receives invalidations of resolved declarations; returns an unsubscribe.
@@ -243,12 +264,21 @@ class FactoryContainer {
         // Mark the entire graph before resolving any member. Notifications from
         // in-place updates are coalesced into this wave, never resolved reentrantly.
         for (final record in _wave) {
-          record.dirty = true;
+          if (record.forceRecreate &&
+              record.factory.lifetime == Lifetime.unique) {
+            // Every prior unique resolution is a snapshot, never a cached slot.
+            record.isRetired = true;
+            record.forceRecreate = false;
+          } else {
+            record.dirty = true;
+          }
         }
         for (final record in _wave) {
-          if (record.dirty) record.owner._build(record);
+          if (!record.isRetired && record.dirty) record.owner._build(record);
         }
+        final notified = <(FactoryContainer, Factory<Object>)>{};
         for (final record in _wave) {
+          if (!notified.add((record.owner, record.factory))) continue;
           for (final listener in record.owner._listeners.toList()) {
             listener(record.factory);
           }

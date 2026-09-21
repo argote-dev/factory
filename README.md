@@ -127,8 +127,9 @@ as `FactoryCleanupException`; repeated `close()` calls return the same future.
 A failed eager initialization throws `FactoryInitializationException` with the
 original error and an awaitable `cleanup` future.
 
-Owned unique values and replaced generations remain alive until their scope
-closes, because previously returned references may still be in use. Use short
+Owned unique values with cleanup and replaced scoped generations remain alive
+until their scope closes, because previously returned references may still be in
+use. Direct unique resolutions without cleanup or observation are not retained. Use short
 scopes for short-lived resources. `FactoryScope.onClose` exposes the close future;
 `onError` handles cleanup failures (the default reports through FlutterError).
 Unmounting starts cleanup without waiting. For an explicitly awaited close, use

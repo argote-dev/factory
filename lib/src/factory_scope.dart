@@ -223,7 +223,9 @@ class _FactoryProviderState<T extends Object>
   void initState() {
     super.initState();
     _unsubscribe = widget.container.addListener((factory) {
-      if (!identical(factory, widget.factory) || !mounted) return;
+      if (!identical(factory, widget.factory) || !_hasValue || !mounted) {
+        return;
+      }
       try {
         _value = widget.container.read(widget.factory);
         _hasValue = true;

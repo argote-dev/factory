@@ -228,6 +228,47 @@ void main() {
   });
 
   testWidgets(
+      'keeps an unconsumed exposed value lazy after an internal refresh',
+      (tester) async {
+    final session = Factory<_Token>.external();
+    var created = 0;
+    final unique = Factory<_Token>(
+      (ref) {
+        ref.watch(session);
+        return _Token('value-${++created}');
+      },
+      lifetime: Lifetime.unique,
+      onChange: ChangePolicy.recreate,
+    );
+    final eager = Factory<Object>(
+      (ref) {
+        ref.read(unique);
+        return Object();
+      },
+      lazy: false,
+    );
+
+    Widget scope(String value) => FactoryScope(
+          modules: [
+            FactoryModule(
+              factories: [session, unique, eager],
+              expose: [unique],
+            ),
+          ],
+          overrides: [session.overrideWithValue(_Token(value))],
+          child: const Directionality(
+            textDirection: TextDirection.ltr,
+            child: SizedBox(),
+          ),
+        );
+
+    await tester.pumpWidget(scope('first'));
+    expect(created, 1);
+    await tester.pumpWidget(scope('second'));
+    expect(created, 2);
+  });
+
+  testWidgets(
       'reports an asynchronous cleanup failure through onClose and onError',
       (tester) async {
     final failing = Factory<Object>(

@@ -27,15 +27,17 @@ A committed workflow is not evidence that hosted CI has already run.
 | Target | Evidence in this environment |
 | --- | --- |
 | Web | `flutter build web` succeeds on Flutter 3.44.0, including its Wasm dry run. |
-| macOS | VM/widget tests pass on Apple Silicon. Native build remains unverified; see below. |
+| macOS | VM/widget tests and `flutter build macos --debug` pass on Apple Silicon. Universal release build remains unverified; see below. |
 | Android, iOS, Linux, Windows | Example scaffolding exists; native builds and device behavior have not been validated locally. |
 
-Native macOS builds encountered environment/toolchain failures: release framework
+The macOS universal release build encountered a toolchain failure: framework
 verification reports `lipo -verify_arch requires exactly one input file` for the
-multi-architecture framework. The debug attempt additionally encountered Xcode
-Swift Package Manager dependency resolution failure. The example deployment target
-is macOS 12, matching the installed Xcode's supported range. These failures do not
-establish native-platform support and are not hidden by the passing widget tests.
+multi-architecture framework. An initial debug attempt encountered a transient
+Swift Package Manager resolution failure; `xcodebuild -resolvePackageDependencies`
+resolved the local packages and the subsequent debug build succeeded. The example
+deployment target is macOS 12, matching the installed Xcode's supported range.
+A successful debug build does not establish universal release or device-flow
+validation.
 
 Flutter SDK versions were obtained from the
 [official SDK archive](https://docs.flutter.dev/install/archive).

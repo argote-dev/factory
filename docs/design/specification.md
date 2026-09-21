@@ -1,8 +1,8 @@
 # Factory: especificación consolidada
 
-Estado: contratos de producto acordados en Q1–Q35. La propuesta de sintaxis y
-detalles operativos de `usage-proposal.md` requiere revisión conjunta antes de cerrar
-la entrevista. No existe todavía implementación ni compatibilidad comprobada.
+Estado: contratos de producto y propuesta integrada aprobados por el usuario
+tras Q1–Q35. Implementación inicial en el repositorio; la evidencia de validación
+y las limitaciones de plataforma se registran en `../support.md`.
 
 ## Propósito y límites
 

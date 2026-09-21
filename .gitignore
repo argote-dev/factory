@@ -1,0 +1,10 @@
+.dart_tool/
+.packages
+build/
+coverage/
+*.iml
+.idea/
+.DS_Store
+**/doc/api/
+**/.flutter-plugins-dependencies
+**/ephemeral/

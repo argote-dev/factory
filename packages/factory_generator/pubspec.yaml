@@ -1,0 +1,19 @@
+name: factory_generator
+description: Optional build_runner generation of Factory modules from annotated declarations.
+version: 0.1.0
+environment:
+  sdk: '>=3.11.0 <4.0.0'
+dependencies:
+  analyzer: ^10.2.0
+  build: ^4.0.0
+  factory_core: ^0.1.0
+  glob: ^2.1.2
+  source_gen: ^4.2.4
+dev_dependencies:
+  build_runner: ^2.15.1
+  build_test: ^3.5.0
+  lints: ^6.0.0
+  test: ^1.29.0
+dependency_overrides:
+  factory_core:
+    path: ../factory_core

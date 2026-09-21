@@ -1,8 +1,8 @@
 # Recorrido completo de API para revisión
 
-Estado: propuesta ilustrativa, no implementada ni compilada. Los contratos de
-`specification.md` están acordados; los nombres auxiliares y detalles operativos
-de este documento requieren revisión conjunta. Las clases de aplicación se omiten.
+Estado: recorrido aprobado por el usuario. El README documenta la API implementada
+y el example contiene clases y widgets ejecutables. Los fragmentos siguientes
+conservan el contexto de la propuesta revisada.
 
 ## Declaraciones y módulos
 
@@ -128,7 +128,7 @@ observe cambios debe elegir su política de actualización.
 final accountRepository = Factory<AccountRepository>(
   (ref) => AccountRepository(
     ref.read(apiClient),
-    ref.watch(session, select: (value) => value.userId),
+    ref.select(session, (value) => value.userId),
   ),
   onChange: ChangePolicy.recreate,
   dispose: (repository) => repository.close(),
@@ -191,3 +191,21 @@ La forma exacta del entrypoint del generador, la adaptación tipada de notifiers
 el orden de propagación y la entrega de errores se validarán técnicamente. Si el
 prototipo requiere cambiar un contrato acordado se volverá a discutir; no se
 consideran cambios autorizados por omisión.
+
+## Concreciones de implementación
+
+- El selector se expresa como `ref.select(factory, selector)` separado de
+  `ref.watch(factory)`, para inferir de forma estática tanto el tipo del objeto
+  como el resultado del selector en Dart. Se mantiene la escucha explícita acordada.
+- `update` recibe `(FactoryRef ref, T value)`, devuelve `void` y vuelve a declarar
+  las observaciones necesarias al actualizar la instancia existente.
+- Se invalidan todos los dependientes antes de reconstruir el grafo; una dependencia
+  compartida no provoca valores intermedios incoherentes en una cadena en diamante.
+- Las generaciones reemplazadas se conservan hasta el cierre del ámbito: conexiones
+  realizadas con `read` y referencias entregadas previamente pueden seguir usándolas.
+  La limpieza conserva las relaciones de cada generación.
+- `FactoryScope.onClose` recibe el Future de cierre; `onError` recibe fallos de limpieza.
+- Un fallo de apertura eager expone la limpieza parcial en
+  `FactoryInitializationException.cleanup`.
+- `FactoryRegistry` anota una función de entrada de nivel superior. El archivo
+  generado se importa como `registry.factory.dart`; no es un `part`.

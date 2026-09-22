@@ -4,6 +4,52 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 
 void main() {
+  testWidgets('one hundred scope cycles balance listeners and owned cleanup',
+      (tester) async {
+    var listenerAdds = 0;
+    var listenerRemoves = 0;
+    var ownedDisposals = 0;
+    final borrowed = _TrackedNotifier(
+      onAdd: () => listenerAdds += 1,
+      onRemove: () => listenerRemoves += 1,
+    );
+    final declaration = Factory<_TrackedNotifier>.external(name: 'notifier');
+    final owned = Factory<Object>(
+      (_) => Object(),
+      name: 'ownedResource',
+      dispose: (_) async => ownedDisposals += 1,
+    );
+
+    for (var cycle = 0; cycle < 100; cycle += 1) {
+      Future<void>? closing;
+      await tester.pumpWidget(
+        FactoryScope(
+          modules: [
+            FactoryModule(
+              factories: [declaration, owned],
+              expose: [declaration],
+            ),
+          ],
+          overrides: [declaration.overrideWithValue(borrowed)],
+          onClose: (future) => closing = future,
+          child: Builder(
+            builder: (context) {
+              context.watch<_TrackedNotifier>();
+              FactoryScope.of(context).read(owned);
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      await tester.pumpWidget(const SizedBox());
+      await closing;
+    }
+
+    expect(listenerAdds, 100);
+    expect(listenerRemoves, listenerAdds);
+    expect(ownedDisposals, 100);
+  });
+
   testWidgets('keeps exposed declarations lazy until Provider consumes them',
       (tester) async {
     var created = 0;
@@ -541,6 +587,25 @@ class _Repository {
   _Repository(this.userId);
 
   final String userId;
+}
+
+class _TrackedNotifier extends ChangeNotifier {
+  _TrackedNotifier({required this.onAdd, required this.onRemove});
+
+  final VoidCallback onAdd;
+  final VoidCallback onRemove;
+
+  @override
+  void addListener(VoidCallback listener) {
+    onAdd();
+    super.addListener(listener);
+  }
+
+  @override
+  void removeListener(VoidCallback listener) {
+    onRemove();
+    super.removeListener(listener);
+  }
 }
 
 class _DisposableNotifier extends ChangeNotifier {

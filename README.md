@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/assets/factory-logo.png" alt="Factory logo" width="180">
+</p>
+
 # Factory
 
 [![Verify](https://github.com/argote-dev/factory/actions/workflows/verify.yml/badge.svg)](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
@@ -9,6 +13,44 @@ objects are built, install a module, and keep using `context.read`,
 Factory is an initial implementation under development. The optional generator
 collects declarations; it does not annotate your business classes or infer their
 constructors.
+
+## Architecture at a glance
+
+```mermaid
+flowchart LR
+  subgraph Composition
+    D["Factory&lt;T&gt;<br/>constructor + policies"]
+    G["Optional generator<br/>@Register + @FactoryRegistry"]
+    M["FactoryModule<br/>factories + expose"]
+    D --> M
+    G --> M
+  end
+
+  subgraph Scope[Scope boundary]
+    S["FactoryScope<br/>Flutter lifecycle"]
+    C["FactoryContainer<br/>resolution graph"]
+    V["Owned and borrowed instances<br/>scoped or unique"]
+    S -->|owns| C
+    C -->|"FactoryRef read / watch / select"| V
+  end
+
+  O["Overrides + local factories"] --> S
+  M -->|install| S
+  V -. observed changes .-> C
+
+  C -->|exposed factories only| P["Provider bridge"]
+  P --> W["Widgets<br/>context.read / watch / select"]
+  C -->|direct read| T["Dart tests and services"]
+  C -->|reverse dependency order| X["Async cleanup"]
+```
+
+Declarations describe construction and lifecycle without creating values.
+Modules install those declarations into a scope; overrides and local factories
+can replace or reconnect parts of the graph. The container resolves lazily,
+tracks dependencies and ownership, reacts to explicit observations, and cleans
+up dependents before dependencies. In Flutter, only declarations listed in
+`expose` cross the Provider bridge, so existing widgets keep using the standard
+Provider APIs while Factory retains lifecycle ownership.
 
 ## Manual setup
 

@@ -26,6 +26,12 @@ Wait for each dependency to become available on pub.dev before publishing the
 next package. The local `pubspec_overrides.yaml` files are excluded from package
 archives; pub may report an informational override hint during this bootstrap.
 
+The root `factory_provider` archive intentionally includes the nested package
+sources. A root `.pubignore` rule for `packages/` is also inherited when running
+`dart pub publish` from those nested package directories, which would make
+`factory_core` and `factory_generator` unpublishable. The small duplication keeps
+all three package publication commands consistent in this monorepo layout.
+
 ## Enable GitHub Actions
 
 After the first version exists, open the package's **Admin** tab on pub.dev and
@@ -42,17 +48,19 @@ long-lived pub.dev credential belongs in repository secrets.
 ## Subsequent releases
 
 Before tagging, verify that all three manifests and changelogs contain the same
-version and that CI passes. Push package tags in dependency order:
+version and that CI passes. The first automated version must be newer than the
+manually published bootstrap version; after publishing `0.2.0` manually, for
+example, push the `0.3.0` package tags in dependency order:
 
 ```sh
-git tag factory_core-v0.2.0
-git push origin factory_core-v0.2.0
+git tag factory_core-v0.3.0
+git push origin factory_core-v0.3.0
 
-git tag factory_provider-v0.2.0
-git push origin factory_provider-v0.2.0
+git tag factory_provider-v0.3.0
+git push origin factory_provider-v0.3.0
 
-git tag factory_generator-v0.2.0
-git push origin factory_generator-v0.2.0
+git tag factory_generator-v0.3.0
+git push origin factory_generator-v0.3.0
 ```
 
 Each tag must point to the same verified release commit. Never reuse or move a

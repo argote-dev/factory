@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:factory/factory.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -41,6 +43,32 @@ class FactoryExampleApp extends StatelessWidget {
                   MaterialPageRoute<void>(
                     builder: (_) => FactoryScope(
                       modules: [profileModule],
+                      local: [userRepository],
+                      overrides: [
+                        session.overrideWith(
+                          (_) => Session('Grace Hopper'),
+                          dispose: (value) => value.dispose(),
+                        ),
+                      ],
+                      onClose: (closing) {
+                        unawaited(
+                          closing.then(
+                            (_) => debugPrint('Profile Factory scope closed'),
+                            onError: (_) {},
+                          ),
+                        );
+                      },
+                      onError: (error, stackTrace) {
+                        FlutterError.reportError(
+                          FlutterErrorDetails(
+                            exception: error,
+                            stack: stackTrace,
+                            context: ErrorDescription(
+                              'while closing the profile flow',
+                            ),
+                          ),
+                        );
+                      },
                       child: const ProfilePage(),
                     ),
                   ),

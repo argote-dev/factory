@@ -1,7 +1,9 @@
-## Unreleased
+## 0.2.0
 
-- Let generated Flutter modules import the public `factory` facade so consumers
-  no longer declare `factory_core` directly.
+- Rename the Flutter/Provider package to `factory_provider` so it can be
+  published independently on pub.dev.
+- Let generated Flutter modules import the public `factory_provider` facade so
+  consumers no longer declare `factory_core` directly.
 - Make common composition failures actionable and document public contracts,
   lifecycle profiling with a measured macOS baseline, the executable example,
   and behavior diagrams.

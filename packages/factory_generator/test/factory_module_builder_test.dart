@@ -38,7 +38,9 @@ void configureFactories() {}
         generateFor: {'example|lib/configure.dart'},
         outputs: {
           'example|lib/configure.factory.dart': decodedMatches(
-            contains("import 'package:factory/factory.dart';"),
+            contains(
+              "import 'package:factory_provider/factory_provider.dart';",
+            ),
           ),
         },
       );

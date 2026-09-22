@@ -1,21 +1,21 @@
 # Factory executable quick start
 
-This app demonstrates incremental adoption of `factory` in an existing Provider
+This app demonstrates incremental adoption of `factory_provider` in an existing Provider
 application. Business and presentation code use ordinary constructors and
 Provider APIs; only `lib/composition/` knows about Factory.
 
 ## Generated route
 
-The example's only runtime DI dependency is `factory`; `factory_generator` and
+The example's only runtime DI dependency is `factory_provider`; `factory_generator` and
 `build_runner` are optional development dependencies. Read these files in order:
 
 ```yaml
 dependencies:
-  factory: ^0.1.0
+  factory_provider: ^0.2.0
   provider: ^6.1.5+1
 dev_dependencies:
   build_runner: ^2.15.1
-  factory_generator: ^0.1.0
+  factory_generator: ^0.2.0
 ```
 
 ```dart

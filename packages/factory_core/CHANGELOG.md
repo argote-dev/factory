@@ -1,4 +1,4 @@
-## Unreleased
+## 0.2.0
 
 - Add an explicit Dart/Flutter generation target to `FactoryRegistry`.
 - Improve missing declaration, external override, and duplicate exposure

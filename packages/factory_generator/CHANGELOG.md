@@ -1,4 +1,4 @@
-## Unreleased
+## 0.2.0
 
 - Generate against either the standalone Dart runtime or the public Flutter
   facade according to `FactoryRegistry.runtime`.

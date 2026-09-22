@@ -30,6 +30,6 @@ enum FactoryRuntime {
   /// Standalone Dart runtime from `package:factory_core`.
   dart,
 
-  /// Flutter and Provider facade from `package:factory`.
+  /// Flutter and Provider facade from `package:factory_provider`.
   flutter,
 }

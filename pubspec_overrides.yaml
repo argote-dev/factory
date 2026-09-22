@@ -1,0 +1,3 @@
+dependency_overrides:
+  factory_core:
+    path: packages/factory_core

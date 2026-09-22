@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/factory-logo.png" alt="Factory logo" width="180">
+  <img src="https://raw.githubusercontent.com/argote-dev/factory/main/docs/assets/factory-logo.png" alt="Factory logo" width="180">
 </p>
 
 # Factory
@@ -55,7 +55,7 @@ Provider APIs while Factory retains lifecycle ownership.
 ## Manual setup
 
 ```dart
-import 'package:factory/factory.dart';
+import 'package:factory_provider/factory_provider.dart';
 import 'package:flutter/material.dart' hide Factory;
 
 final client = Factory<ApiClient>(
@@ -182,7 +182,7 @@ not resolve more dependencies or await the scope's own closing future.
 
 ## Optional annotations
 
-Flutter applications add only `factory` at runtime and add `factory_generator`
+Flutter applications add only `factory_provider` at runtime and add `factory_generator`
 plus `build_runner` as development dependencies. Standalone Dart applications
 use `factory_core` instead.
 

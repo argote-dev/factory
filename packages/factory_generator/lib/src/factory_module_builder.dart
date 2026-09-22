@@ -55,7 +55,7 @@ class FactoryModuleBuilder implements Builder {
     final runtimeName = runtime.objectValue.variable?.name;
     final runtimeImport = switch (runtimeName) {
       'dart' => 'package:factory_core/factory_core.dart',
-      'flutter' => 'package:factory/factory.dart',
+      'flutter' => 'package:factory_provider/factory_provider.dart',
       _ => throw InvalidGenerationSource(
         'Unsupported FactoryRegistry runtime. Choose FactoryRuntime.dart or '
         'FactoryRuntime.flutter.',

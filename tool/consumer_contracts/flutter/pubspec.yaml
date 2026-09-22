@@ -4,7 +4,7 @@ environment:
   sdk: '>=3.11.0 <4.0.0'
   flutter: '>=3.19.0'
 dependencies:
-  factory:
+  factory_provider:
     path: ../../..
   flutter:
     sdk: flutter

@@ -1,6 +1,6 @@
 # Public API decision guide
 
-This guide is an inventory and decision matrix for Factory 0.1.x. Its terms
+This guide is an inventory and decision matrix for Factory 0.2.x. Its terms
 follow [the project glossary](../CONTEXT.md), and every behavior is exercised by
 the public-API tests linked below.
 
@@ -60,7 +60,7 @@ ownership rules, ordered closure, Flutter scope callbacks, annotations, and the
 three public error shapes. Package boundaries remain intentional:
 
 - `factory_core`: Dart runtime and annotations; no Flutter dependency.
-- `factory`: Flutter/Provider facade; re-exports the core API.
+- `factory_provider`: Flutter/Provider facade; re-exports the core API.
 - `factory_generator`: optional development dependency.
 
 The spelling of policies and annotations remains provisional during 0.x. If a

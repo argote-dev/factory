@@ -1,0 +1,25 @@
+name: Memory regression
+description: Report reproducible retained growth after Factory scope closure
+title: "memory: "
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: Environment
+      description: Commit, OS, architecture, Dart/Flutter versions, mode and device.
+    validations: {required: true}
+  - type: textarea
+    attributes:
+      label: Scenario and steps
+      description: Scenario, warm-up, GC, iteration count and capture moments.
+    validations: {required: true}
+  - type: textarea
+    attributes:
+      label: Three-run baseline and result
+      description: Heap, retained size, external memory and RSS before/after for every run.
+    validations: {required: true}
+  - type: textarea
+    attributes:
+      label: Evidence and retaining path
+      description: Sanitized CSV/snapshot links, Trace Instances result and retaining path.
+    validations: {required: true}

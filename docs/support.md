@@ -12,8 +12,9 @@ recorded separately from deployment-platform targets.
 | `factory_generator` | Dart 3.11.0 | Builder tests and analysis pass on Dart 3.11.0 and 3.12.0. |
 | `example` | Dart 3.11.0 | Both composition flows and analysis pass on Flutter 3.44.0. |
 
-The minimum SDK checks use clean temporary copies and independent dependency
-resolution. The optional generator does not increase the runtime's SDK minimum.
+The runtime minimum SDK check uses a clean runtime-only copy and independent
+dependency resolution. The optional generator does not increase the runtime's
+SDK minimum.
 Provider was resolved at 6.1.5+1. Generator dependencies use analyzer 10.2.0,
 source_gen 4.2.4 and build_runner 2.15.1; analyzer 14 requires a newer `meta`
 version than Flutter 3.44.0's SDK pin permits.
@@ -44,10 +45,12 @@ Flutter SDK versions were obtained from the
 
 ## Reproduction
 
-Run the commands in the root README. For runtime-only minimum checks, use
-`flutter pub get --no-example` so the optional generator/example SDK constraints
-are not included. Regenerate modules with `dart run build_runner build` in
-`example`; `watch` provides the same builder during development.
+Run the commands in the root README. For runtime-only minimum checks, copy the
+root `pubspec.yaml`, `analysis_options.yaml`, `lib/`, `test/`, and
+`packages/factory_core/` into a clean temporary directory before resolving
+dependencies. This keeps the optional generator/example SDK constraints out of
+the check. Regenerate modules with `dart run build_runner build` in `example`;
+`watch` provides the same builder during development.
 
 The example has two launch entrypoints. Its widget tests exercise the same flow
 with both, including ChangeNotifier-driven rendering and cleanup after navigation.

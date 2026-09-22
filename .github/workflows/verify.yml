@@ -20,7 +20,7 @@ jobs:
         os: [ubuntu-latest, macos-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.44.0'
@@ -60,14 +60,24 @@ jobs:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
           cache: true
-      - run: flutter pub get --no-example
+      - name: Prepare runtime-only package
+        shell: bash
+        run: |
+          mkdir -p runtime_check/packages
+          cp pubspec.yaml analysis_options.yaml runtime_check/
+          cp -R lib test runtime_check/
+          cp -R packages/factory_core runtime_check/packages/
+      - run: flutter pub get
+        working-directory: runtime_check
       - run: flutter test
+        working-directory: runtime_check
       - run: flutter analyze lib test
+        working-directory: runtime_check
       - run: dart pub get
         working-directory: packages/factory_core
       - run: dart test
@@ -79,7 +89,7 @@ jobs:
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: '3.11.0'

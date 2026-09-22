@@ -1,0 +1,53 @@
+name: Bug report
+description: Report reproducible incorrect behavior in Factory.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for taking the time to report a problem.
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Provide a small code sample or a link to a minimal repository.
+      render: dart
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Factory version
+      placeholder: 0.1.0
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: Include Flutter/Dart versions, platform, and operating system.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional context
+      description: Add logs, stack traces, or other useful details. Remove secrets first.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Checklist
+      options:
+        - label: I searched for an existing issue describing this problem.
+          required: true
+        - label: I removed credentials and other sensitive information.
+          required: true

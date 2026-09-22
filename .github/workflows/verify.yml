@@ -1,8 +1,20 @@
 name: Verify
-on: [push, pull_request]
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   packages:
+    timeout-minutes: 45
     strategy:
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
@@ -45,6 +57,7 @@ jobs:
         working-directory: example
 
   runtime-minimum:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -63,6 +76,7 @@ jobs:
         working-directory: packages/factory_core
 
   generator-minimum:
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

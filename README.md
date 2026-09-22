@@ -1,5 +1,7 @@
 # Factory
 
+[![Verify](https://github.com/argote-dev/factory/actions/workflows/verify.yml/badge.svg)](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
+
 Dependency injection for Flutter apps that already use Provider. Declare how
 objects are built, install a module, and keep using `context.read`,
 `context.watch`, `context.select`, and `Consumer`.
@@ -176,3 +178,9 @@ flutter analyze lib test
 See [the runnable example](example/README.md) for both Factory and Provider-only
 entrypoints using the same business classes and widgets, and
 [compatibility and validation](docs/support.md) for tested SDKs and platforms.
+
+Contributions are welcome. Read [the contribution guide](CONTRIBUTING.md) before
+opening a pull request. Please report vulnerabilities according to the
+[security policy](SECURITY.md), not through a public issue.
+
+Factory is available under the [MIT License](LICENSE).

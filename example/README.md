@@ -63,6 +63,34 @@ The equivalent manual module is exercised beside `appModule` in
 `test/modules_test.dart`: construct `FactoryModule(factories: [...], expose:
 [...])` and pass it to the same `FactoryScope`. No generator is required.
 
+## Adoption, nested scope, and ownership
+
+The root scope borrows the Provider-owned `Session` with `overrideWithValue`;
+Factory never disposes it. The profile route installs a child module. Its
+controller and the root client are Factory-owned because their declarations
+construct them with cleanup callbacks. Closing the route completes `onClose`,
+releases the controller, and reports failures through `onError`; closing the root
+later releases the client.
+
+The profile route also replaces `session` with an owned `Grace Hopper` session
+and lists `userRepository` in `local`. The child repository therefore resolves
+the replacement while the root still displays `Ada Lovelace`; leaving the route
+disposes the replacement and restores the unchanged parent view. The route's
+`onClose` callback explicitly observes successful completion, and `onError`
+reports an aggregated failure with route context.
+
+Use `overrides` for a local value or constructor. Add an inherited dependent to
+`local` when it must be rebuilt against that child override; the parent remains
+unchanged. Keep only dependencies needed by widgets in `expose`; internal
+dependencies stay inside composition. For repeated navigation and asynchronous
+cleanup investigations, follow the
+[memory profiling playbook](../docs/memory-profiling.md).
+
+The dedicated `lib/memory_profile.dart` entrypoint exposes deterministic runtime,
+scope, `unique`, replacement, and propagation scenarios through the VM Service.
+It is intentionally separate from the tutorial UI and is run in profile mode as
+documented by the playbook.
+
 ## Removal route
 
 `lib/main_provider.dart` wires the same domain and presentation directly with

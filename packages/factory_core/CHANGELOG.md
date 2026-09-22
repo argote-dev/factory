@@ -1,3 +1,10 @@
+## Unreleased
+
+- Add an explicit Dart/Flutter generation target to `FactoryRegistry`.
+- Improve missing declaration, external override, and duplicate exposure
+  diagnostics with corrective actions.
+- Add repeated lifecycle and ownership contract coverage.
+
 ## 0.1.0
 
 - Add typed factory declarations and modules.

@@ -13,8 +13,23 @@ class Register {
 /// Marks the composition entrypoint used by the optional generator.
 class FactoryRegistry {
   /// Selects package-relative source globs to scan for registrations.
-  const FactoryRegistry({this.include = const ['lib/**.dart']});
+  const FactoryRegistry({
+    this.include = const ['lib/**.dart'],
+    this.runtime,
+  });
 
   /// The package-relative sources to aggregate.
   final List<String> include;
+
+  /// Chooses the public facade imported by generated modules.
+  final FactoryRuntime? runtime;
+}
+
+/// Public runtime facade targeted by generated modules.
+enum FactoryRuntime {
+  /// Standalone Dart runtime from `package:factory_core`.
+  dart,
+
+  /// Flutter and Provider facade from `package:factory`.
+  flutter,
 }

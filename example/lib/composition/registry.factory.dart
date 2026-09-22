@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-import 'package:factory_core/factory_core.dart';
+import 'package:factory/factory.dart';
 import 'package:factory_example/composition/factories.dart' as factory0;
 
 final appModule = FactoryModule(

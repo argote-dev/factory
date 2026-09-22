@@ -3,6 +3,48 @@ import 'package:factory_generator/factory_generator.dart';
 import 'package:test/test.dart';
 
 void main() {
+  test('rejects a registry without an explicit runtime', () async {
+    final result = await testBuilder(
+      FactoryModuleBuilder(),
+      {
+        ..._coreAssets,
+        'example|lib/configure.dart': '''
+import 'package:factory_core/factory_core.dart';
+@FactoryRegistry()
+void configureFactories() {}
+''',
+      },
+      rootPackage: 'example',
+      generateFor: {'example|lib/configure.dart'},
+    );
+    expect(result.succeeded, isFalse);
+    expect(result.errors.single, contains('must select exactly one runtime'));
+  });
+
+  test(
+    'targets the Flutter facade when the registry selects Flutter',
+    () async {
+      await testBuilder(
+        FactoryModuleBuilder(),
+        {
+          ..._coreAssets,
+          'example|lib/configure.dart': '''
+import 'package:factory_core/factory_core.dart';
+@FactoryRegistry(runtime: FactoryRuntime.flutter)
+void configureFactories() {}
+''',
+        },
+        rootPackage: 'example',
+        generateFor: {'example|lib/configure.dart'},
+        outputs: {
+          'example|lib/configure.factory.dart': decodedMatches(
+            contains("import 'package:factory/factory.dart';"),
+          ),
+        },
+      );
+    },
+  );
+
   test('generates deterministic modules from annotated factories', () async {
     await testBuilder(
       FactoryModuleBuilder(),
@@ -11,7 +53,7 @@ void main() {
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
 
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
         'example|lib/services.dart': '''
@@ -53,7 +95,7 @@ final appModule = FactoryModule(
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
 
-@FactoryRegistry(include: ['lib/composition/**.dart'])
+@FactoryRegistry(runtime: FactoryRuntime.dart, include: ['lib/composition/**.dart'])
 void configureFactories() {}
 ''',
         'example|lib/composition/app.dart': '''
@@ -89,7 +131,7 @@ final ignored = Factory<Ignored>((ref) => Ignored());
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
         'example|lib/services.dart': '''
@@ -115,7 +157,7 @@ final secondary = Factory<Client>((ref) => Client());
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
         'example|lib/services.dart': '''
@@ -139,9 +181,9 @@ final client = Factory<Client>((ref) => Client());
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureOne() {}
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.flutter)
 void configureTwo() {}
 ''',
       },
@@ -150,6 +192,7 @@ void configureTwo() {}
     );
     expect(result.succeeded, isFalse);
     expect(result.errors.single, contains('Only one @FactoryRegistry'));
+    expect(result.errors.single, contains('remove the conflicting registry'));
   });
 
   test('rejects non-Factory registrations', () async {
@@ -159,7 +202,7 @@ void configureTwo() {}
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
         'example|lib/services.dart': '''
@@ -182,7 +225,7 @@ final String notAFactory = 'not a factory';
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
         'example|lib/services.dart': '''
@@ -206,7 +249,7 @@ final _client = Factory<Client>((ref) => Client());
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
         'example|lib/services.dart': '''
@@ -229,7 +272,7 @@ void invalidRegistration() {}
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 class InvalidRegistry {}
 ''',
       },
@@ -250,7 +293,7 @@ class InvalidRegistry {}
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
         'example|lib/services.dart': '''
@@ -276,7 +319,7 @@ class InvalidMember {
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry(include: ['test/**.dart'])
+@FactoryRegistry(runtime: FactoryRuntime.dart, include: ['test/**.dart'])
 void configureFactories() {}
 ''',
       },
@@ -294,7 +337,7 @@ void configureFactories() {}
         ..._coreAssets,
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
         'example|lib/stale.factory.dart': '''
@@ -317,7 +360,7 @@ final stale = 'must not be scanned';
         'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
 part 'configure_part.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
         'example|lib/configure_part.dart': '''
@@ -350,7 +393,7 @@ import 'package:factory_core/factory_core.dart';
           ..._coreAssets,
           'example|lib/configure.dart': '''
 import 'package:factory_core/factory_core.dart';
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.dart)
 void configureFactories() {}
 ''',
           'example|lib/types.dart': '''
@@ -388,9 +431,12 @@ class Register {
 }
 
 class FactoryRegistry {
-  const FactoryRegistry({this.include = const ['lib/**.dart']});
+  const FactoryRegistry({this.include = const ['lib/**.dart'], this.runtime});
   final List<String> include;
+  final FactoryRuntime? runtime;
 }
+
+enum FactoryRuntime { dart, flutter }
 
 class Factory<T> {
   Factory(T Function(Object) create);

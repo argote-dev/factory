@@ -1,4 +1,4 @@
 import 'package:factory/factory.dart';
 
-@FactoryRegistry()
+@FactoryRegistry(runtime: FactoryRuntime.flutter)
 void configureFactories() {}

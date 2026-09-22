@@ -6,8 +6,6 @@ environment:
 dependencies:
   factory:
     path: ../../..
-  factory_core:
-    path: ../../../packages/factory_core
   flutter:
     sdk: flutter
   provider: ^6.1.5+1

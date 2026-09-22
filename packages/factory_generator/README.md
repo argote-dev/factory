@@ -4,7 +4,7 @@ Optional `build_runner` support for assembling `Factory` declarations into
 `FactoryModule` values. It never constructs dependencies: the generated file
 only imports existing declarations and groups their references.
 
-Add both the runtime and generator packages to an application:
+For standalone Dart, add the core runtime and generator packages:
 
 ```yaml
 dependencies:
@@ -21,7 +21,10 @@ Create one composition entrypoint and keep declarations in `lib/`:
 // lib/composition/registry.dart
 import 'package:factory_core/factory_core.dart';
 
-@FactoryRegistry(include: ['lib/composition/**.dart'])
+@FactoryRegistry(
+  include: ['lib/composition/**.dart'],
+  runtime: FactoryRuntime.dart,
+)
 void configureFactories() {}
 ```
 
@@ -52,3 +55,9 @@ existing `.factory.dart` files so generated output never becomes an input.
 Each library may contain one `@FactoryRegistry` top-level function. `@Register`
 is valid only on public top-level `final Factory<T>` declarations. A module
 cannot expose two declarations with the same resolved `T` type.
+
+For Flutter, depend on `factory` instead of `factory_core`, import
+`package:factory/factory.dart`, and select `FactoryRuntime.flutter`. The generated
+module then imports the public Flutter facade, avoiding a direct transitive core
+dependency. Generation is optional for both targets, and each registry library
+must explicitly select exactly one target.

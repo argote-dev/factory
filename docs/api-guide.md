@@ -52,3 +52,20 @@ Public errors are `StateError`/`ArgumentError` for invalid composition,
 `FactoryInitializationException` for eager creation failures (with an awaitable
 cleanup future), and `FactoryCleanupException` for aggregated cleanup failures.
 Flutter closure is observable with `onClose` and failures with `onError`.
+
+## Stability toward 1.0
+
+Candidates to stabilize are declarations, modules, resolution operations,
+ownership rules, ordered closure, Flutter scope callbacks, annotations, and the
+three public error shapes. Package boundaries remain intentional:
+
+- `factory_core`: Dart runtime and annotations; no Flutter dependency.
+- `factory`: Flutter/Provider facade; re-exports the core API.
+- `factory_generator`: optional development dependency.
+
+The spelling of policies and annotations remains provisional during 0.x. If a
+name changes, the preferred migration is a deprecated forwarding member for one
+minor line plus a changelog recipe. Structural changes require a consumer test
+before implementation. The Dart 3.3 / Flutter 3.19 minimums remain unchanged.
+Before 1.0, validate published-package consumer fixtures, collect the memory
+baselines, and review provisional names; this work does not publish 1.0.

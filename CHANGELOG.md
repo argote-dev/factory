@@ -1,3 +1,11 @@
+## Unreleased
+
+- Let generated Flutter modules import the public `factory` facade so consumers
+  no longer declare `factory_core` directly.
+- Make common composition failures actionable and document public contracts,
+  lifecycle profiling with a measured macOS baseline, the executable example,
+  and behavior diagrams.
+
 ## 0.1.0
 
 - Add a standalone scoped DI container with lazy/eager creation, unique values,

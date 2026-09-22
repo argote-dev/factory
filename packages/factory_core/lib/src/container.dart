@@ -28,7 +28,8 @@ class FactoryContainer {
         final previous = _exposed[factory.valueType];
         if (previous != null && !identical(previous, factory)) {
           throw ArgumentError(
-              'Duplicate exposed type ${factory.valueType}: $previous and $factory.');
+              'Duplicate exposed type ${factory.valueType}: $previous and '
+              '$factory conflict in the same Factory scope. Expose only one.');
         }
         _exposed[factory.valueType] = factory;
       }
@@ -83,7 +84,11 @@ class FactoryContainer {
     _checkOpen();
     if (_factories.contains(factory)) return this;
     if (parent != null) return parent!._owner(factory);
-    throw StateError('$factory is not installed.');
+    final scope = parent == null ? 'root Factory scope' : 'Factory scope';
+    throw StateError(
+      '$factory is not installed in this $scope. Install it in a module or '
+      'as a local declaration in the appropriate scope.',
+    );
   }
 
   /// Resolves a declaration in its owning scope.

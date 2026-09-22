@@ -57,7 +57,12 @@ class Factory<T extends Object> {
   bool get _hasDispose => _dispose != null;
   FutureOr<void> _release(Object value) => _dispose?.call(value as T);
   Object _construct(FactoryRef ref) {
-    if (_create == null) throw StateError('$this needs an external value.');
+    if (_create == null) {
+      throw StateError(
+        '$this is external and needs an override with a value or constructor '
+        'in its Factory scope.',
+      );
+    }
     return _create(ref);
   }
 

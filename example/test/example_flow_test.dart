@@ -26,7 +26,10 @@ void main() {
 
       await tester.tap(find.byKey(const Key('load-profile')));
       await tester.pumpAndSettle();
-      expect(find.text('Profile: Ada Lovelace profile'), findsOneWidget);
+      final profileName = example.name == 'Factory composition'
+          ? 'Grace Hopper profile'
+          : 'Ada Lovelace profile';
+      expect(find.text('Profile: $profileName'), findsOneWidget);
 
       await tester.pageBack();
       await tester.pumpAndSettle();

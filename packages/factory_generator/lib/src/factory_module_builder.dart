@@ -35,7 +35,8 @@ class FactoryModuleBuilder implements Builder {
     if (registries.isEmpty) return;
     if (registries.length > 1) {
       throw InvalidGenerationSource(
-        'Only one @FactoryRegistry entrypoint is allowed per library.',
+        'Only one @FactoryRegistry entrypoint is allowed per library. Choose '
+        'one runtime target and remove the conflicting registry.',
         element: registries.last,
       );
     }
@@ -43,6 +44,24 @@ class FactoryModuleBuilder implements Builder {
     final annotation = ConstantReader(
       _registryChecker.firstAnnotationOf(registries.single),
     );
+    final runtime = annotation.read('runtime');
+    if (runtime.isNull) {
+      throw InvalidGenerationSource(
+        'FactoryRegistry must select exactly one runtime: '
+        'FactoryRuntime.dart or FactoryRuntime.flutter.',
+        element: registries.single,
+      );
+    }
+    final runtimeName = runtime.objectValue.variable?.name;
+    final runtimeImport = switch (runtimeName) {
+      'dart' => 'package:factory_core/factory_core.dart',
+      'flutter' => 'package:factory/factory.dart',
+      _ => throw InvalidGenerationSource(
+        'Unsupported FactoryRegistry runtime. Choose FactoryRuntime.dart or '
+        'FactoryRuntime.flutter.',
+        element: registries.single,
+      ),
+    };
     final includes = annotation
         .read('include')
         .listValue
@@ -74,7 +93,7 @@ class FactoryModuleBuilder implements Builder {
       }
     }
 
-    final source = _render(registrations);
+    final source = _render(registrations, runtimeImport);
     await buildStep.writeAsString(
       buildStep.inputId.changeExtension('.factory.dart'),
       source,
@@ -205,7 +224,7 @@ class FactoryModuleBuilder implements Builder {
     }
   }
 
-  String _render(List<_Registration> registrations) {
+  String _render(List<_Registration> registrations, String runtimeImport) {
     final sorted = [...registrations]
       ..sort((left, right) {
         final byAsset = left.asset.path.compareTo(right.asset.path);
@@ -223,7 +242,7 @@ class FactoryModuleBuilder implements Builder {
     final buffer = StringBuffer()
       ..writeln('// GENERATED CODE - DO NOT MODIFY BY HAND')
       ..writeln()
-      ..writeln("import 'package:factory_core/factory_core.dart';");
+      ..writeln("import '$runtimeImport';");
     for (final entry in aliases.entries) {
       buffer.writeln("import '${_packageUri(entry.key)}' as ${entry.value};");
     }

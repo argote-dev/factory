@@ -206,7 +206,7 @@ Run `dart run build_runner watch`. Import `composition/registry.factory.dart`
 and install its `appModule`. Generated modules include internal/eager declarations
 as well as the exposed subset. The manual equivalent remains available.
 
-## Integration and Provider exposure
+## Integration, propagation, and closure
 
 ```mermaid
 flowchart LR
@@ -223,6 +223,45 @@ scope are different concepts. Start with the
 [executable quick start](example/README.md) and the
 [public API guide](docs/api-guide.md). Review this diagram whenever module
 exposure or the Flutter bridge changes.
+
+```mermaid
+flowchart LR
+  E["Override or observed event"] --> G["Propagation wave"]
+  G --> R["read: unchanged"]
+  G --> W["watch: replacement"]
+  G --> Q["select: changed selection"]
+  W --> C{"Policy"}
+  Q --> C
+  C -->|recreate| N["New instance"]
+  C -->|update| U["Update current instance"]
+  N --> P["Provider notification"]
+  U --> P
+```
+
+`read` keeps its existing connection. `watch` reacts to instance replacement;
+`select` additionally reacts when its selected state changes. The declaration's
+explicit policy either recreates or updates, after which an exposed declaration
+notifies Provider. There is no rollback or asynchronous construction. Review
+this diagram when observation or propagation semantics change.
+
+```mermaid
+flowchart TD
+  X["Close requested"] --> H["Close child scopes"]
+  H --> O["Cancel observers"]
+  O --> D["Release dependents"]
+  D --> R["Release dependencies"]
+  R --> F["Complete close Future"]
+  D -. failure .-> A["Collect all errors"]
+  R -. failure .-> A
+  A --> F
+```
+
+Closing rejects new resolution immediately, closes children before their
+parent, cancels observers, and releases dependents before dependencies. Every
+cleanup is attempted; aggregated failures complete the close future with
+`FactoryCleanupException` and reach `FactoryScope.onError`. Factory does not
+release delivered references early. Review this diagram when ownership or
+closure changes. See the [memory playbook](docs/memory-profiling.md).
 
 ## Repository development
 

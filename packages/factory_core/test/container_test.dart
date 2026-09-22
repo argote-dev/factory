@@ -4,6 +4,46 @@ import 'package:test/test.dart';
 class Observable {}
 
 void main() {
+  test('public composition diagnostics identify declarations and corrections',
+      () async {
+    final missing = Factory<Object>((_) => Object(), name: 'missingClient');
+    final external = Factory<Object>.external(name: 'session');
+    final container = FactoryContainer(modules: [
+      FactoryModule(factories: [external]),
+    ]);
+
+    expect(
+      () => container.read(missing),
+      throwsA(isA<StateError>()
+          .having((error) => error.message, 'declaration',
+              contains('missingClient'))
+          .having((error) => error.message, 'action', contains('install'))),
+    );
+    expect(
+      () => container.read(external),
+      throwsA(isA<StateError>()
+          .having((error) => error.message, 'declaration', contains('session'))
+          .having((error) => error.message, 'action', contains('override'))),
+    );
+    await container.close();
+
+    final first = Factory<String>((_) => 'a', name: 'primaryName');
+    final second = Factory<String>((_) => 'b', name: 'secondaryName');
+    expect(
+      () => FactoryContainer(modules: [
+        FactoryModule(
+          factories: [first, second],
+          expose: [first, second],
+        ),
+      ]),
+      throwsA(isA<ArgumentError>()
+          .having((error) => error.message, 'type', contains('String'))
+          .having((error) => error.message, 'first', contains('primaryName'))
+          .having(
+              (error) => error.message, 'second', contains('secondaryName'))),
+    );
+  });
+
   test('repeated public runtime cycles release observers and ownership',
       () async {
     var subscriptions = 0;

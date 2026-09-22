@@ -4,6 +4,98 @@ import 'package:test/test.dart';
 class Observable {}
 
 void main() {
+  test('repeated public runtime cycles release observers and ownership',
+      () async {
+    var subscriptions = 0;
+    var cancellations = 0;
+    var ownedReleases = 0;
+    final borrowed = Object();
+
+    for (var cycle = 0; cycle < 100; cycle += 1) {
+      final source = Factory<Object>.external(name: 'source');
+      final readTarget = Factory<Object>(
+        (ref) {
+          ref.read(source);
+          return Object();
+        },
+        name: 'readTarget',
+        dispose: (_) => ownedReleases += 1,
+      );
+      final watchTarget = Factory<Object>(
+        (ref) {
+          ref.watch(source);
+          return Object();
+        },
+        name: 'watchTarget',
+        onChange: ChangePolicy.recreate,
+        dispose: (_) => ownedReleases += 1,
+      );
+      final selectTarget = Factory<Object>(
+        (ref) {
+          ref.select(source, (_) => cycle);
+          return Object();
+        },
+        name: 'selectTarget',
+        onChange: ChangePolicy.recreate,
+        dispose: (_) => ownedReleases += 1,
+      );
+      final container = FactoryContainer(
+        modules: [
+          FactoryModule(
+            factories: [source, readTarget, watchTarget, selectTarget],
+          ),
+        ],
+        overrides: [source.overrideWithValue(borrowed)],
+        observe: (_, __) {
+          subscriptions += 1;
+          return () => cancellations += 1;
+        },
+      );
+      container
+        ..read(readTarget)
+        ..read(watchTarget)
+        ..read(selectTarget);
+      await container.close();
+    }
+
+    expect(subscriptions, 100);
+    expect(cancellations, subscriptions);
+    expect(ownedReleases, 300);
+  });
+
+  test('one thousand unique resolutions preserve ownership contracts',
+      () async {
+    var ownedReleases = 0;
+    final owned = Factory<Object>(
+      (_) => Object(),
+      lifetime: Lifetime.unique,
+      dispose: (_) => ownedReleases += 1,
+    );
+    final cleanupFree = Factory<Object>(
+      (_) => Object(),
+      lifetime: Lifetime.unique,
+    );
+    final borrowed = Factory<Object>.external(name: 'borrowed');
+    final borrowedValue = Object();
+    final container = FactoryContainer(
+      modules: [
+        FactoryModule(factories: [owned, cleanupFree, borrowed])
+      ],
+      overrides: [borrowed.overrideWithValue(borrowedValue)],
+    );
+    final values = <Object>{};
+    final cleanupFreeValues = <Object>{};
+    for (var index = 0; index < 1000; index += 1) {
+      values.add(container.read(owned));
+      cleanupFreeValues.add(container.read(cleanupFree));
+      expect(identical(container.read(borrowed), borrowedValue), isTrue);
+    }
+    expect(values, hasLength(1000));
+    expect(cleanupFreeValues, hasLength(1000));
+    await container.close();
+    expect(ownedReleases, 1000);
+  });
+
   test('a subscription cleanup failure does not skip owned resource cleanup',
       () async {
     var released = false;

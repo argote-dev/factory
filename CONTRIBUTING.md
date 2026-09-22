@@ -37,6 +37,7 @@ flutter analyze lib test
 (cd example && dart run build_runner build)
 git diff --exit-code -- example/lib/composition/registry.factory.dart
 (cd example && flutter test && flutter analyze)
+./tool/verify_consumers.sh
 ```
 
 Run `dart format .` for changed Dart files. Generated files must be committed

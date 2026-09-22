@@ -1,0 +1,9 @@
+name: factory_dart_consumer
+publish_to: none
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+dependencies:
+  factory_core:
+    path: ../../../packages/factory_core
+dev_dependencies:
+  test: ^1.25.0

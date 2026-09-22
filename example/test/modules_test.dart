@@ -1,4 +1,4 @@
-import 'package:factory/factory.dart';
+import 'package:factory_provider/factory_provider.dart';
 import 'package:factory_example/composition/factories.dart';
 import 'package:factory_example/composition/registry.factory.dart';
 import 'package:factory_example/domain/profile_flow_monitor.dart';

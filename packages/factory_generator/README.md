@@ -8,11 +8,11 @@ For standalone Dart, add the core runtime and generator packages:
 
 ```yaml
 dependencies:
-  factory_core: ^0.1.0
+  factory_core: ^0.2.0
 
 dev_dependencies:
   build_runner: ^2.15.1
-  factory_generator: ^0.1.0
+  factory_generator: ^0.2.0
 ```
 
 Create one composition entrypoint and keep declarations in `lib/`:
@@ -56,8 +56,9 @@ Each library may contain one `@FactoryRegistry` top-level function. `@Register`
 is valid only on public top-level `final Factory<T>` declarations. A module
 cannot expose two declarations with the same resolved `T` type.
 
-For Flutter, depend on `factory` instead of `factory_core`, import
-`package:factory/factory.dart`, and select `FactoryRuntime.flutter`. The generated
-module then imports the public Flutter facade, avoiding a direct transitive core
-dependency. Generation is optional for both targets, and each registry library
-must explicitly select exactly one target.
+For Flutter, depend on `factory_provider` instead of `factory_core`, import
+`package:factory_provider/factory_provider.dart`, and select
+`FactoryRuntime.flutter`. The generated module then imports the public Flutter
+facade, avoiding a direct transitive core dependency. Generation is optional for
+both targets, and each registry library must explicitly select exactly one
+target.

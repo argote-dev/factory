@@ -43,6 +43,9 @@ git diff --exit-code -- example/lib/composition/registry.factory.dart
 Run `dart format .` for changed Dart files. Generated files must be committed
 and must match the generator output.
 
+Maintainers should follow the [pub.dev publishing guide](docs/publishing.md)
+for release order, tag conventions, and GitHub OIDC configuration.
+
 ## Pull requests
 
 In the pull request description, explain the problem, the chosen approach, and

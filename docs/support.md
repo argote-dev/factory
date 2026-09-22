@@ -8,7 +8,7 @@ recorded separately from deployment-platform targets.
 | Component | Declared minimum | Validation |
 | --- | --- | --- |
 | `factory_core` | Dart 3.3.0 | Unit tests and analysis pass on Dart 3.3.0 and 3.12.0. |
-| `factory` Flutter adapter | Flutter 3.19.0 / Dart 3.3.0 | Widget tests and analysis pass on Flutter 3.19.0 and 3.44.0. |
+| `factory_provider` Flutter adapter | Flutter 3.19.0 / Dart 3.3.0 | Widget tests and analysis pass on Flutter 3.19.0 and 3.44.0. |
 | `factory_generator` | Dart 3.11.0 | Builder tests and analysis pass on Dart 3.11.0 and 3.12.0. |
 | `example` | Dart 3.11.0 | Both composition flows and analysis pass on Flutter 3.44.0. |
 

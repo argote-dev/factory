@@ -1,9 +1,9 @@
-# Investigación: soporte para `factory` sobre Provider
+# Investigación: soporte para `factory_provider` sobre Provider
 
 Fecha: 20 de septiembre de 2026. Informe de hechos y alternativas; no decide
 una API. Prioridades confirmadas: registrar/conectar dependencias automáticamente
 en apps Provider existentes, probar el wiring fuera de widgets, y permitir retirar
-`factory` cambiando sólo composición, nunca widgets ni clases de negocio.
+`factory_provider` cambiando sólo composición, nunca widgets ni clases de negocio.
 
 ## Fuentes consultadas
 
@@ -45,7 +45,7 @@ existente (`.value`); reutilizar una existente con `create` puede hacer que se
 elimine mientras sigue en uso. También confirma que `create` y `update` son
 perezosos salvo `lazy: false`. [README oficial](https://github.com/rrousselGit/provider#exposing-a-value).
 Por tanto, el adaptador no puede asumir que toda instancia que recibe pertenece
-a `factory` ni disponer automáticamente un `ChangeNotifier` existente.
+a `factory_provider` ni disponer automáticamente un `ChangeNotifier` existente.
 
 Riverpod guarda estado en `ProviderContainer`, integrado por `ProviderScope`, y
 ofrece `read`, `listen`, dispose y `overrides`. [contenedores](https://riverpod.dev/docs/concepts2/containers)
@@ -77,7 +77,7 @@ resolver y ordenar dependencias; no basta un azúcar sintáctico sobre `MultiPro
 - Distinguir explícitamente fábricas **poseídas** de valores **prestados**. Sólo
   las poseídas se eliminan, una vez y en orden inverso a su creación.
 - Mantener dominio, repositorios, servicios y widgets libres de imports,
-  anotaciones o bases de `factory`. Retirarlo equivale a sustituir wiring.
+  anotaciones o bases de `factory_provider`. Retirarlo equivale a sustituir wiring.
 - Resolver el grafo sin árbol de widgets para probar resolución, orden, ciclos,
   overrides y dispose sin `pumpWidget`. Separarlo en un paquete Dart sin Flutter
   sería una decisión adicional todavía no tomada.
@@ -94,7 +94,7 @@ resolver y ordenar dependencias; no basta un azúcar sintáctico sobre `MultiPro
 
 | Escenario | Resultado esperado |
 | --- | --- |
-| App existente | `Consumer`, `read`, `watch` y `select` siguen consumiendo el mismo contrato; ningún widget importa `factory`. |
+| App existente | `Consumer`, `read`, `watch` y `select` siguen consumiendo el mismo contrato; ningún widget importa `factory_provider`. |
 | Grafo normal | Dependencias se resuelven automáticamente en orden válido, perezoso o eager según declaración. |
 | Test Dart | Cada caso usa registro nuevo; reemplaza una dependencia y no comparte estado o recursos. |
 | Notificador nuevo | `notifyListeners` conserva reconstrucciones y el valor se dispone sólo al cerrar su scope. |
@@ -123,7 +123,7 @@ público debe seguir versionado semántico. [versionado](https://dart.dev/tools/
 1. ¿Qué API de resolución independiente del árbol y qué puente con Provider
    satisfacen las pruebas sin widgets y la retirada limitada a configuración?
 2. ¿Overrides locales sólo para test/arranque o también sesión/pantalla?
-3. ¿Qué recursos puede poseer y eliminar `factory`? ¿Hace falta dispose asíncrono?
+3. ¿Qué recursos puede poseer y eliminar Factory? ¿Hace falta dispose asíncrono?
 4. ¿Qué forma de clave mantiene simples las implementaciones múltiples?
 5. Para dependencias dinámicas, ¿la política por defecto será estable, actualizar
    la misma instancia o recrearla? ¿Cómo se valida cada promesa?

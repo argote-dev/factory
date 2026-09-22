@@ -1,4 +1,4 @@
-import 'package:factory/factory.dart';
+import 'package:factory_provider/factory_provider.dart';
 
 /// Entrypoint scanned by `factory_generator`.
 @FactoryRegistry(

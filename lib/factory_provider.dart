@@ -1,4 +1,4 @@
-/// Flutter integration for scoped Factory declarations.
+/// Flutter and Provider integration for scoped Factory declarations.
 library;
 
 export 'package:factory_core/factory_core.dart';

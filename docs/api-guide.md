@@ -1,6 +1,6 @@
 # Public API decision guide
 
-This guide is an inventory and decision matrix for Factory 0.2.x. Its terms
+This guide is an inventory and decision matrix for Factory 0.3.x. Its terms
 follow [the project glossary](../CONTEXT.md), and every behavior is exercised by
 the public-API tests linked below.
 

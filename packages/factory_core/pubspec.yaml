@@ -1,6 +1,6 @@
 name: factory_core
 description: Typed factories, scoped resolution and deterministic ownership without Flutter.
-version: 0.2.0
+version: 0.3.0
 repository: https://github.com/argote-dev/factory
 issue_tracker: https://github.com/argote-dev/factory/issues
 environment:

@@ -114,8 +114,26 @@ class FactoryOverride {
   final FutureOr<void> Function(Object)? _dispose;
 }
 
-/// Access to dependencies while constructing an instance.
+/// Scoped dependency access that can be retained by a constructed instance.
+///
+/// Obtained through [FactoryRef.resolver]. Reads preserve the owning scope's
+/// lifetime and cleanup order without observing replacements or state changes.
+abstract interface class FactoryResolver {
+  /// Resolves [factory] without caching its result or subscribing to changes.
+  ///
+  /// Throws a [StateError] if the scope has closed, the instance failed to
+  /// construct, or this read would introduce a dependency cycle.
+  T resolve<T extends Object>(Factory<T> factory);
+}
+
+/// Access to dependencies while constructing or updating an instance.
 abstract interface class FactoryRef {
+  /// The resolution capability for this instance, usable after construction.
+  ///
+  /// Passes dependency access to an instance without retaining this ref's
+  /// construction and observation operations.
+  FactoryResolver get resolver;
+
   /// Resolves a declaration without subscribing to changes.
   T read<T extends Object>(Factory<T> factory);
 

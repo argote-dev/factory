@@ -1,6 +1,6 @@
 # Public API decision guide
 
-This guide is an inventory and decision matrix for Factory 0.2.x. Its terms
+This guide is an inventory and decision matrix for Factory 0.3.x. Its terms
 follow [the project glossary](../CONTEXT.md), and every behavior is exercised by
 the public-API tests linked below.
 
@@ -9,12 +9,31 @@ the public-API tests linked below.
 | Operation | Reads the current value | Reacts to replacement | Reacts to selected state | Required policy | Evidence |
 | --- | --- | --- | --- | --- | --- |
 | `ref.read(factory)` | Yes | No | No | None | [`changes_test.dart`](../packages/factory_core/test/changes_test.dart) |
+| `ref.resolver.resolve(factory)` / notifier `resolve(factory)` | Yes | No | No | None | [`resolver_test.dart`](../packages/factory_core/test/resolver_test.dart) |
 | `ref.watch(factory)` | Yes | Yes | No | `recreate` or `update` | [`changes_test.dart`](../packages/factory_core/test/changes_test.dart) |
 | `ref.select(factory, selector)` | Yes | Yes | Only when selection changes | `recreate` or `update` plus an observer adapter | [`changes_test.dart`](../packages/factory_core/test/changes_test.dart) |
 
 `recreate` builds a new instance; `update` mutates the current instance through
 its declared callback. See
 [`changes_test.dart`](../packages/factory_core/test/changes_test.dart).
+
+`FactoryRef` is for construction and update callbacks. Pass its `resolver` to
+instances that need access later: `FactoryResolver` retains the original
+consumer's identity, tracks cleanup dependencies and rejects cycles even when
+both values already exist. It resolves declarations using the consumer's owner
+scope and rejects access as soon as that scope starts closing.
+
+The Flutter `FactoryChangeNotifier` base receives this resolver by constructor,
+provides protected `resolve` access and rejects it after `dispose`. It adds no
+subscriptions or cache and does not dispose resolved dependencies. Register
+notifier cleanup in the owning `Factory` declaration, and call `super.dispose()`
+in overrides. An explicit `late final` field retains its first result; an
+ordinary method call to `resolve` reads the current value each time. See
+[`factory_change_notifier_test.dart`](../test/factory_change_notifier_test.dart).
+
+This opt-in base couples its consumers to Factory. The existing constructor
+injection path preserves removal by changing composition alone. Field injection
+annotations are outside this API's scope.
 
 ## Creation, reuse, and ownership
 
@@ -40,6 +59,7 @@ previously returned reference is never invalidated early. See
 | `overrides` / `local` | Replace values and reconnect inherited dependents in one scope | [`factory_scope_test.dart`](../test/factory_scope_test.dart) |
 | `FactoryContainer` | Pure-Dart resolution and explicit closure | [Dart consumer](../tool/consumer_contracts/dart/test/public_contract_test.dart) |
 | `FactoryScope` | Flutter lifecycle, callbacks and Provider integration | [Flutter consumer](../tool/consumer_contracts/flutter/test/public_contract_test.dart) |
+| `FactoryChangeNotifier` | Optional resolution within a notifier with explicit ownership and lifetime guards | [`factory_change_notifier_test.dart`](../test/factory_change_notifier_test.dart) |
 
 The optional annotations are `@Register` and `@FactoryRegistry`. A registry
 selects `FactoryRuntime.dart` for a standalone consumer or

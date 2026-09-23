@@ -150,6 +150,45 @@ Provider. Register their `dispose` callback explicitly; Provider does not own
 these objects. Declaring a notifier merely as `Object` does not opt into this
 adapter.
 
+## Optional dependency access inside notifiers
+
+Use `FactoryChangeNotifier` when a notifier should resolve its own dependencies.
+Pass `ref.resolver` through its constructor and request a typed declaration:
+
+```dart
+class ProfileController extends FactoryChangeNotifier {
+  ProfileController(super.resolver);
+
+  late final UserRepository repository = resolve(userRepository);
+
+  Future<void> load() async {
+    await repository.loadProfileName();
+  }
+}
+
+final profileController = Factory<ProfileController>(
+  (ref) => ProfileController(ref.resolver),
+  dispose: (controller) => controller.dispose(),
+);
+```
+
+Here `userRepository` is an installed `Factory<UserRepository>` declaration.
+`resolve` works in constructor bodies, `late` initializers and later methods.
+Each call respects `scoped`/`unique`; storing a result in a field explicitly
+retains that instance. Reads do not subscribe to replacements or state changes.
+
+Resolution uses the notifier's owning scope, including its overrides and parent
+scopes. Dependencies keep their existing cleanup owner, including those first
+resolved from a later method. Calls after notifier disposal or scope closure,
+and reads that introduce dependency cycles, throw `StateError`. Subclasses that
+override `dispose` must call `super.dispose()`; asynchronous work and its
+cancellation remain the application's responsibility.
+
+This API is optional and couples the notifier to Factory. Constructor injection
+of concrete dependencies remains available for classes that must support removing
+Factory by changing composition alone. No field annotations or code generation
+are needed.
+
 ## Cleanup and tests without widgets
 
 ```dart
@@ -173,7 +212,8 @@ original error and an awaitable `cleanup` future.
 
 Owned unique values with cleanup and replaced scoped generations remain alive
 until their scope closes, because previously returned references may still be in
-use. Direct unique resolutions without cleanup or observation are not retained. Use short
+use. Direct unique resolutions without cleanup, observation or a retained resolver
+are not retained. Use short
 scopes for short-lived resources. `FactoryScope.onClose` exposes the close future;
 `onError` handles cleanup failures (the default reports through FlutterError).
 Unmounting starts cleanup without waiting. For an explicitly awaited close, use

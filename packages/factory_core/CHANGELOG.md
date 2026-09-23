@@ -1,3 +1,12 @@
+## 0.3.0
+
+- Add `FactoryRef.resolver` and `FactoryResolver.resolve` for retained scoped
+  dependency access without observation or an extra cache.
+- Track late dependencies for cleanup, reject dependency cycles and keep
+  retained resolvers associated with their original instances after replacement.
+- Custom implementations of `FactoryRef` must implement its new `resolver`
+  getter; existing construction callbacks do not need changes.
+
 ## 0.2.0
 
 - Add an explicit Dart/Flutter generation target to `FactoryRegistry`.

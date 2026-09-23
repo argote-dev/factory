@@ -11,8 +11,15 @@ _Evitar_: Dependency como nombre público de esta declaración.
 
 **Retirada de Factory**:
 Eliminación de Factory de una aplicación modificando únicamente su configuración
-de dependencias y conservando sus widgets y clases de negocio.
+de dependencias y conservando sus widgets y clases de negocio, siempre que estos
+no hayan adoptado la resolución interna opcional.
 _Evitar_: Migración de toda la aplicación.
+
+**Resolución interna opcional**:
+Obtención de dependencias desde un notifier mediante Factory, elegida
+explícitamente por su autor; estos consumidores dependen de Factory y quedan
+fuera de la garantía de retirada limitada a configuración.
+_Evitar_: Inyección por constructor, acceso obligatorio para todos los notifiers.
 
 **Instancia propia de Factory**:
 Instancia creada y administrada por Factory, cuya liberación le corresponde.

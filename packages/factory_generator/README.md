@@ -8,11 +8,11 @@ For standalone Dart, add the core runtime and generator packages:
 
 ```yaml
 dependencies:
-  factory_core: ^0.2.0
+  factory_core: ^0.3.0
 
 dev_dependencies:
   build_runner: ^2.15.1
-  factory_generator: ^0.2.0
+  factory_generator: ^0.3.0
 ```
 
 Create one composition entrypoint and keep declarations in `lib/`:

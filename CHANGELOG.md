@@ -1,3 +1,13 @@
+## 0.3.0
+
+- Add optional `FactoryChangeNotifier` with constructor-supplied dependency
+  access through `resolve(factory)`, including disposal and scope guards.
+- Add `FactoryRef.resolver` and `FactoryResolver` for non-reactive reads after
+  construction, preserving scoped/unique lifetimes and dependency cleanup order.
+- Reject cycles introduced by late dependency reads and preserve resolver
+  identity when an instance is replaced. Field injection annotations remain
+  outside this feature's scope.
+
 ## 0.2.0
 
 - Rename the Flutter/Provider package to `factory_provider` so it can be

@@ -95,11 +95,12 @@ class FactoryContainer {
   T read<T extends Object>(Factory<T> factory) {
     final record = _resolve(factory);
     final value = record.value as T;
-    // A direct, cleanup-free unique resolution has no scope-owned lifecycle.
-    // Internal graph reads retain their edges for observation and cleanup order.
+    // Direct unique values need no bookkeeping unless they retain scope access,
+    // cleanup or observation. Graph reads keep edges for cleanup order.
     if (factory.lifetime == Lifetime.unique &&
         record.release == null &&
-        record.watches.isEmpty) {
+        record.watches.isEmpty &&
+        record.resolver == null) {
       record.owner._records.remove(record);
     }
     return value;
@@ -163,6 +164,10 @@ class FactoryContainer {
     } catch (error, stack) {
       record.error = error;
       record.stack = stack;
+      if (record.value == null) {
+        record.resolver?.invalidate();
+        record.resolver = null;
+      }
     } finally {
       record.forceRecreate = false;
       _resolving.removeLast();
@@ -347,11 +352,13 @@ class FactoryContainer {
       visit(record);
     }
     for (final record in ordered.reversed) {
-      if (record.value == null) continue;
       try {
-        await record.release?.call(record.value!);
+        if (record.value != null) await record.release?.call(record.value!);
       } catch (error) {
         errors.add(error);
+      } finally {
+        record.resolver?.invalidate();
+        record.resolver = null;
       }
     }
     _records.clear();
@@ -373,6 +380,7 @@ class _Record {
   bool forceRecreate = false;
   bool isRetired = false;
   FutureOr<void> Function(Object)? release;
+  _Resolver? resolver;
   final Set<_Record> dependencies = {};
   final Set<_Record> watches = {};
   final List<void Function()> subscriptions = [];
@@ -390,12 +398,69 @@ class _Record {
     if (errors.isNotEmpty) throw FactoryCleanupException(errors);
   }
 
-  _Record retired() => _Record(owner, factory)
-    ..value = value
-    ..release = release
-    ..isRetired = true
-    ..dirty = false
-    ..dependencies.addAll(dependencies);
+  void addDependency(_Record dependency) {
+    final visited = <_Record>{};
+    final path = <_Record>[];
+    bool reachesThis(_Record current) {
+      if (!visited.add(current)) return false;
+      path.add(current);
+      if (identical(current, this)) return true;
+      for (final next in current.dependencies) {
+        if (reachesThis(next)) return true;
+      }
+      path.removeLast();
+      return false;
+    }
+
+    if (reachesThis(dependency)) {
+      throw StateError(
+        'Dependency cycle: ${[
+          factory,
+          ...path.map((r) => r.factory)
+        ].join(' -> ')}',
+      );
+    }
+    dependencies.add(dependency);
+  }
+
+  _Record retired() {
+    final retired = _Record(owner, factory)
+      ..value = value
+      ..release = release
+      ..isRetired = true
+      ..dirty = false
+      ..dependencies.addAll(dependencies)
+      ..resolver = resolver;
+    // A retained capability follows the old value, not the slot being rebuilt.
+    resolver?._record = retired;
+    resolver = null;
+    return retired;
+  }
+}
+
+class _Resolver implements FactoryResolver {
+  _Resolver(this._record);
+
+  _Record? _record;
+
+  void invalidate() => _record = null;
+
+  _Record _activeRecord() {
+    final record = _record;
+    if (record == null) {
+      throw StateError('The FactoryResolver is no longer active.');
+    }
+    record.owner._checkOpen();
+    return record;
+  }
+
+  @override
+  T resolve<T extends Object>(Factory<T> factory) {
+    final dependency = _activeRecord().owner._resolve(factory);
+    // Construction can replace the consumer or start closing its scope.
+    _activeRecord().addDependency(dependency);
+    return dependency.value as T;
+  }
 }
 
 class _Ref implements FactoryRef {
@@ -403,9 +468,12 @@ class _Ref implements FactoryRef {
   final FactoryContainer owner;
   final _Record record;
   @override
+  FactoryResolver get resolver => record.resolver ??= _Resolver(record);
+
+  @override
   T read<T extends Object>(Factory<T> factory) {
     final dependency = owner._resolve(factory);
-    record.dependencies.add(dependency);
+    record.addDependency(dependency);
     return dependency.value as T;
   }
 
@@ -416,11 +484,9 @@ class _Ref implements FactoryRef {
           '${record.factory} must choose onChange to observe $factory.');
     }
     final target = owner._owner(factory);
+    late final _Record dependency;
     try {
-      final dependency = target._resolve(factory);
-      record.dependencies.add(dependency);
-      record.watches.add(dependency);
-      return dependency.value as T;
+      dependency = target._resolve(factory);
     } catch (_) {
       for (final failed in target._records.reversed) {
         if (!failed.isRetired && identical(failed.factory, factory)) {
@@ -430,6 +496,9 @@ class _Ref implements FactoryRef {
       }
       rethrow;
     }
+    record.addDependency(dependency);
+    record.watches.add(dependency);
+    return dependency.value as T;
   }
 
   @override

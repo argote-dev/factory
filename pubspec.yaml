@@ -1,13 +1,13 @@
 name: factory_provider
 description: Explicit, scoped dependency injection for Flutter applications using Provider.
-version: 0.2.0
+version: 0.3.0
 repository: https://github.com/argote-dev/factory
 issue_tracker: https://github.com/argote-dev/factory/issues
 environment:
   sdk: '>=3.3.0 <4.0.0'
   flutter: '>=3.19.0'
 dependencies:
-  factory_core: ^0.2.0
+  factory_core: ^0.3.0
   flutter:
     sdk: flutter
   provider: ^6.1.5+1

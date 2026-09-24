@@ -10,7 +10,7 @@ configured workflow, platform scaffold or successful dry-run is not a release.
 | --- | --- | --- | --- |
 | Manual Dart runtime | Dart 3.3.0 | Candidate core; no Flutter or generator | Packaged core tests, analysis, current/historical consumers |
 | Provider runtime, including already generated modules | Flutter 3.19.0 / Dart 3.3.0 | Candidate core + adapter; Provider **6.1.5+1** fixed; no generator installed | Packaged runtime tests, analysis, manual/generated and historical consumers |
-| Optional Dart generation | Dart 3.11.0 | Coordinated candidate generator/core | Packaged builder tests, analysis, generated Dart consumer and regeneration |
+| Optional generation | Flutter 3.41.0 / Dart 3.11.0 | Coordinated candidate generator/core | Packaged builder tests, analysis, generated Dart/Flutter consumers and historical regeneration |
 | Current Dart/Flutter composition and generation | Flutter 3.47.2 / Dart 3.13.2 | Coordinated candidate packages; exact dependency resolutions in evidence.json | All packaged tests, current and 0.3 consumers, existing output, regeneration and drift |
 
 The runtime minimums are retained throughout 1.x. Generator SDK increases follow

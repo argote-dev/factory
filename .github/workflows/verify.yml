@@ -91,6 +91,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
@@ -116,9 +118,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: dart-lang/setup-dart@v1
         with:
-          sdk: '3.11.0'
+          fetch-depth: 0
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.41.0'
+          cache: true
       - uses: actions/setup-python@v6
         with:
           python-version: '3.13'
@@ -127,7 +132,7 @@ jobs:
           name: current-evidence
           path: build/current
       - run: pip install -r tool/requirements.txt
-      - run: python tool/verify_release.py --archives build/current/archives --generator-only --output build/acceptance/generator-minimum
+      - run: python tool/verify_release.py --archives build/current/archives --generator-only --flutter-generation --output build/acceptance/generator-minimum
       - uses: actions/upload-artifact@v4
         if: always()
         with:

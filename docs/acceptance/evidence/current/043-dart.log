@@ -1,0 +1,5 @@
+Analyzing current-dart...
+
+  error - test/interfaces_test.dart:14:7 - Missing concrete implementation of 'getter FactoryRef.resolver'. Try implementing the missing method, or make the class abstract. - non_abstract_class_inherits_abstract_member
+
+1 issue found.

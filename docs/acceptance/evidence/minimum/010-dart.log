@@ -1,0 +1,10 @@
+
+00:00 +0: loading test/interfaces_test.dart
+00:00 +0: test/interfaces_test.dart: external interfaces preserve typed resolution and observation
+00:00 +1: test/async_startup_test.dart: normal exit attempts every resource despite cleanup errors
+00:00 +2: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +3: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +4: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +5: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +6: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +6: All tests passed!

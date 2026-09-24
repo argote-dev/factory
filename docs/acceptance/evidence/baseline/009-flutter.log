@@ -1,0 +1,22 @@
+00:00 +0: loading /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_change_notifier_test.dart
+00:00 +0: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_change_notifier_test.dart: resolves in constructor, late fields and methods without widgets
+00:00 +1: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: one hundred scope cycles balance listeners and owned cleanup
+00:00 +2: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: one hundred scope cycles balance listeners and owned cleanup
+00:00 +3: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: one hundred scope cycles balance listeners and owned cleanup
+00:00 +4: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: one hundred scope cycles balance listeners and owned cleanup
+00:00 +5: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: keeps exposed declarations lazy until Provider consumes them
+00:00 +6: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: adapts an exposed ChangeNotifier for existing Provider consumers
+00:00 +7: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: rebuilds an exposed dependent after a selected state change
+00:00 +8: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: closes an owned notifier once and exposes completion
+00:00 +9: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: does not dispose a borrowed notifier
+00:00 +10: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: updates an exposed borrowed value when its identity changes
+00:00 +11: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: applies changes made to a reused overrides list
+00:00 +12: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: rejects a changed configuration before applying its overrides
+00:00 +13: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: keeps a unique exposed value across unrelated scope rebuilds
+00:00 +14: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: keeps an unconsumed exposed value lazy after an internal refresh
+00:00 +15: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: reports an asynchronous cleanup failure through onClose and onError
+00:00 +16: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: keeps parent dependencies when a child rebuilds a local dependent
+00:00 +17: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: surfaces a failed recreation instead of retaining a Provider value
+00:00 +18: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: preserves child state while an exposed value is replaced
+00:00 +19: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-88uetbpr/factory_provider/test/factory_scope_test.dart: notifies Provider consumers after an in-place update
+00:00 +20: All tests passed!

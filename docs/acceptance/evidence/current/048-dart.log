@@ -1,0 +1,137 @@
+00:00 +0: loading test/interfaces_test.dart
+00:00 +0 -1: loading test/interfaces_test.dart [E]
+  Failed to load "test/interfaces_test.dart":
+  test/interfaces_test.dart:1:8: Error: Error when reading '../broken-cache/hosted/localhost%255857980/factory_core-1.0.0/lib/factory_core.dart': No such file or directory
+  import 'package:factory_core/factory_core.dart';
+         ^
+  test/interfaces_test.dart:6:38: Error: Type 'FactoryResolver' not found.
+  class ApplicationResolver implements FactoryResolver {
+                                       ^^^^^^^^^^^^^^^
+  test/interfaces_test.dart:8:9: Error: Type 'FactoryContainer' not found.
+    final FactoryContainer container;
+          ^^^^^^^^^^^^^^^^
+  test/interfaces_test.dart:11:31: Error: Type 'Factory' not found.
+    T resolve<T extends Object>(Factory<T> factory) => container.read(factory);
+                                ^^^^^^^
+  test/interfaces_test.dart:14:33: Error: Type 'FactoryRef' not found.
+  class ApplicationRef implements FactoryRef {
+                                  ^^^^^^^^^^
+  test/interfaces_test.dart:16:9: Error: Type 'FactoryRef' not found.
+    final FactoryRef delegate;
+          ^^^^^^^^^^
+  test/interfaces_test.dart:19:3: Error: Type 'FactoryResolver' not found.
+    FactoryResolver get resolver => delegate.resolver;
+    ^^^^^^^^^^^^^^^
+  test/interfaces_test.dart:22:28: Error: Type 'Factory' not found.
+    T read<T extends Object>(Factory<T> factory) => delegate.read(factory);
+                             ^^^^^^^
+  test/interfaces_test.dart:25:29: Error: Type 'Factory' not found.
+    T watch<T extends Object>(Factory<T> factory) => delegate.watch(factory);
+                              ^^^^^^^
+  test/interfaces_test.dart:28:33: Error: Type 'Factory' not found.
+    R select<T extends Object, R>(Factory<T> factory, R Function(T) selector) =>
+                                  ^^^^^^^
+  test/interfaces_test.dart:32:34: Error: Type 'FactoryVisitor' not found.
+  class DeclarationType implements FactoryVisitor<Type> {
+                                   ^^^^^^^^^^^^^^
+  test/interfaces_test.dart:34:32: Error: Type 'Factory' not found.
+    Type visit<T extends Object>(Factory<T> factory) => T;
+                                 ^^^^^^^
+  test/interfaces_test.dart:8:9: Error: 'FactoryContainer' isn't a type.
+    final FactoryContainer container;
+          ^^^^^^^^^^^^^^^^
+  test/interfaces_test.dart:11:31: Error: 'Factory' isn't a type.
+    T resolve<T extends Object>(Factory<T> factory) => container.read(factory);
+                                ^^^^^^^
+  test/interfaces_test.dart:16:9: Error: 'FactoryRef' isn't a type.
+    final FactoryRef delegate;
+          ^^^^^^^^^^
+  test/interfaces_test.dart:22:28: Error: 'Factory' isn't a type.
+    T read<T extends Object>(Factory<T> factory) => delegate.read(factory);
+                             ^^^^^^^
+  test/interfaces_test.dart:25:29: Error: 'Factory' isn't a type.
+    T watch<T extends Object>(Factory<T> factory) => delegate.watch(factory);
+                              ^^^^^^^
+  test/interfaces_test.dart:28:33: Error: 'Factory' isn't a type.
+    R select<T extends Object, R>(Factory<T> factory, R Function(T) selector) =>
+                                  ^^^^^^^
+  test/interfaces_test.dart:34:32: Error: 'Factory' isn't a type.
+    Type visit<T extends Object>(Factory<T> factory) => T;
+                                 ^^^^^^^
+  test/interfaces_test.dart:40:20: Error: Couldn't find constructor 'Factory'.
+      final source = Factory<String>.external();
+                     ^^^^^^^
+  test/interfaces_test.dart:47:17: Error: Undefined name 'ChangePolicy'.
+        onChange: ChangePolicy.recreate,
+                  ^^^^^^^^^^^^
+  test/interfaces_test.dart:41:21: Error: Method not found: 'Factory'.
+      final derived = Factory<String>(
+                      ^^^^^^^
+  test/interfaces_test.dart:51:9: Error: Method not found: 'FactoryModule'.
+          FactoryModule(factories: [source, derived])
+          ^^^^^^^^^^^^^
+  test/interfaces_test.dart:49:23: Error: Method not found: 'FactoryContainer'.
+      final container = FactoryContainer(
+                        ^^^^^^^^^^^^^^^^
+00:00 +0 -2: loading test/async_startup_test.dart [E]
+  Failed to load "test/async_startup_test.dart":
+  test/async_startup_test.dart:3:8: Error: Error when reading '../broken-cache/hosted/localhost%255857980/factory_core-1.0.0/lib/factory_core.dart': No such file or directory
+  import 'package:factory_core/factory_core.dart';
+         ^
+  lib/async_startup.dart:1:8: Error: Error when reading '../broken-cache/hosted/localhost%255857980/factory_core-1.0.0/lib/factory_core.dart': No such file or directory
+  import 'package:factory_core/factory_core.dart';
+         ^
+  lib/async_startup.dart:21:9: Error: Type 'FactoryContainer' not found.
+    final FactoryContainer container;
+          ^^^^^^^^^^^^^^^^
+  test/async_startup_test.dart:28:15: Error: 'FactoryCleanupException' isn't a type.
+            isA<FactoryCleanupException>()
+                ^^^^^^^^^^^^^^^^^^^^^^^
+  test/async_startup_test.dart:29:32: Error: The getter 'errors' isn't defined for the type 'Object?'.
+   - 'Object' is from 'dart:core'.
+  Try correcting the name to the name of an existing getter, or defining a getter or field named 'errors'.
+                .having((e) => e.errors, 'errors', [failure]),
+                                 ^^^^^^
+  lib/async_startup.dart:21:9: Error: 'FactoryContainer' isn't a type.
+    final FactoryContainer container;
+          ^^^^^^^^^^^^^^^^
+  lib/async_startup.dart:42:34: Error: The method 'FactoryCleanupException' isn't defined for the type 'Application'.
+   - 'Application' is from 'package:factory_dart_consumer/async_startup.dart' ('lib/async_startup.dart').
+  Try correcting the name to the name of an existing method, or defining a method named 'FactoryCleanupException'.
+      if (errors.isNotEmpty) throw FactoryCleanupException(errors);
+                                   ^^^^^^^^^^^^^^^^^^^^^^^
+  lib/async_startup.dart:63:31: Error: Couldn't find constructor 'Factory'.
+    final databaseDeclaration = Factory<Resource>.external();
+                                ^^^^^^^
+  lib/async_startup.dart:64:30: Error: Couldn't find constructor 'Factory'.
+    final sessionDeclaration = Factory<Resource>.external();
+                               ^^^^^^^
+  lib/async_startup.dart:65:21: Error: Method not found: 'Factory'.
+    final dependent = Factory<String>(
+                      ^^^^^^^
+  lib/async_startup.dart:72:7: Error: Method not found: 'FactoryModule'.
+        FactoryModule(
+        ^^^^^^^^^^^^^
+  lib/async_startup.dart:70:21: Error: Method not found: 'FactoryContainer'.
+    final container = FactoryContainer(
+                      ^^^^^^^^^^^^^^^^
+00:00 +0 -3: loading test/public_contract_test.dart [E]
+  Failed to load "test/public_contract_test.dart":
+  test/public_contract_test.dart:1:8: Error: Error when reading '../broken-cache/hosted/localhost%255857980/factory_core-1.0.0/lib/factory_core.dart': No such file or directory
+  import 'package:factory_core/factory_core.dart';
+         ^
+  test/public_contract_test.dart:7:21: Error: Method not found: 'Factory'.
+      final message = Factory<String>((_) => 'ready', dispose: (_) {
+                      ^^^^^^^
+  test/public_contract_test.dart:10:20: Error: Method not found: 'FactoryModule'.
+      final module = FactoryModule(factories: [message]);
+                     ^^^^^^^^^^^^^
+  test/public_contract_test.dart:11:23: Error: Method not found: 'FactoryContainer'.
+      final container = FactoryContainer(modules: [module]);
+                        ^^^^^^^^^^^^^^^^
+00:00 +0 -3: Some tests failed.
+
+Failing tests:
+  test/async_startup_test.dart: loading test/async_startup_test.dart
+  test/interfaces_test.dart: loading test/interfaces_test.dart
+  test/public_contract_test.dart: loading test/public_contract_test.dart

@@ -1,0 +1,18 @@
+Running with `skip-validation`. No client-side validation is done.
+Publishing factory_generator 1.0.0 to https://pub.dev:
+├── CHANGELOG.md (<1 KB)
+├── LICENSE (1 KB)
+├── README.md (1 KB)
+├── analysis_options.yaml (<1 KB)
+├── build.yaml (<1 KB)
+├── lib
+│   ├── builder.dart (<1 KB)
+│   ├── factory_generator.dart (<1 KB)
+│   └── src
+│       └── factory_module_builder.dart (10 KB)
+├── pubspec.yaml (<1 KB)
+└── test
+    └── factory_module_builder_test.dart (12 KB)
+
+Total compressed archive size: 6 KB.
+Wrote package archive at /private/tmp/factory-33-accepted/current/archives/factory_generator.tar.gz

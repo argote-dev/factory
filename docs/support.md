@@ -41,7 +41,7 @@ The [Verify workflow](https://github.com/argote-dev/factory/actions/workflows/ve
 uploads `current-evidence`, `runtime-minimum-evidence`,
 `generator-minimum-evidence` and `baseline-evidence`. Those artifacts are evidence
 only for the commit in a completed run. Local acceptance is recorded separately
-in the candidate report; the older 54-test validation record applied to an earlier
+in the [candidate report](acceptance/factory-1.0.md); the older 54-test validation record applied to an earlier
 implementation and is not evidence for 1.0.
 
 ## Platform scope

@@ -1,0 +1,81 @@
+{
+  "commit": "2b063d2fd66e924c4fd022176f3d34caa28bd850",
+  "dirty": false,
+  "version": "1.0.0",
+  "runtime_only": false,
+  "commands": [
+    {
+      "command": [
+        "dart",
+        "--version"
+      ],
+      "cwd": "/private/tmp/factory-33-acceptance",
+      "exit": 0,
+      "expected_failure": false,
+      "log": "000-dart.log"
+    },
+    {
+      "command": [
+        "flutter",
+        "--version"
+      ],
+      "cwd": "/private/tmp/factory-33-acceptance",
+      "exit": 0,
+      "expected_failure": false,
+      "log": "001-flutter.log"
+    },
+    {
+      "command": [
+        "dart",
+        "pub",
+        "publish",
+        "--dry-run"
+      ],
+      "cwd": "/private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-bmic2465/factory_generator",
+      "exit": 0,
+      "expected_failure": false,
+      "log": "002-dart.log"
+    },
+    {
+      "command": [
+        "dart",
+        "test"
+      ],
+      "cwd": "/private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-bmic2465/factory_generator",
+      "exit": 0,
+      "expected_failure": false,
+      "log": "003-dart.log"
+    },
+    {
+      "command": [
+        "dart",
+        "analyze",
+        "lib",
+        "test"
+      ],
+      "cwd": "/private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-bmic2465/factory_generator",
+      "exit": 0,
+      "expected_failure": false,
+      "log": "004-dart.log"
+    },
+    {
+      "command": [
+        "flutter",
+        "pub",
+        "get"
+      ],
+      "cwd": "/private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-bmic2465/current-flutter",
+      "exit": 1,
+      "expected_failure": false,
+      "log": "005-flutter.log"
+    }
+  ],
+  "result": "failed",
+  "dart": "Dart SDK version: 3.11.0 (stable) (Mon Feb 9 00:38:07 2026 -0800) on \"macos_arm64\"",
+  "flutter": "\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 A new version of Flutter is available!                  \u2502\n\u2502                                                         \u2502\n\u2502 To update to the latest version, run \"flutter upgrade\". \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\nFlutter 3.41.0 \u2022 channel stable \u2022 https://github.com/flutter/flutter.git\nFramework \u2022 revision 44a626f4f0 (8 months ago) \u2022 2026-02-10 10:16:12 -0800\nEngine \u2022 hash cc8e596aa65130a0678cc59613ed1c5125184db4 (revision 3452d735bd) (7 months ago) \u2022 2026-02-09 22:03:17.000Z\nTools \u2022 Dart 3.11.0 \u2022 DevTools 2.54.1",
+  "archives": {
+    "factory_generator.tar.gz": "893df9b1a9d574a32a5b94e1bd07e3dc2a5f7ef115a87ea4e97d1e13d634e91b",
+    "factory_provider.tar.gz": "de015709af06cc3354308f89a8747420b5751e910da1f69b7964e628d8048aa8",
+    "factory_core.tar.gz": "e5da2de6b553964dd491a038c74e2b429b15e929941b8c91b7e308c0212b6bdd"
+  }
+}

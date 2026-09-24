@@ -1,0 +1,18 @@
+00:00 +0: loading test/factory_module_builder_test.dart
+00:00 +0: test/factory_module_builder_test.dart: rejects a registry without an explicit runtime
+00:03 +1: test/factory_module_builder_test.dart: targets the Flutter facade when the registry selects Flutter
+00:03 +2: test/factory_module_builder_test.dart: generates deterministic modules from annotated factories
+00:03 +3: test/factory_module_builder_test.dart: honors the registry include glob
+00:03 +4: test/factory_module_builder_test.dart: rejects duplicate exposed types in one module
+00:03 +5: test/factory_module_builder_test.dart: rejects invalid module identifiers
+00:03 +6: test/factory_module_builder_test.dart: rejects duplicate registry entrypoints in one library
+00:03 +7: test/factory_module_builder_test.dart: rejects non-Factory registrations
+00:03 +8: test/factory_module_builder_test.dart: rejects private Factory registrations
+00:03 +9: test/factory_module_builder_test.dart: rejects Register on a top-level function
+00:03 +10: test/factory_module_builder_test.dart: rejects FactoryRegistry outside a top-level function
+00:03 +11: test/factory_module_builder_test.dart: rejects Register on class members
+00:03 +12: test/factory_module_builder_test.dart: rejects include globs outside lib
+00:03 +13: test/factory_module_builder_test.dart: does not scan stale generated factory outputs
+00:03 +14: test/factory_module_builder_test.dart: skips part inputs before resolving their library
+00:03 +15: test/factory_module_builder_test.dart: does not confuse nested generic types from different libraries
+00:03 +16: All tests passed!

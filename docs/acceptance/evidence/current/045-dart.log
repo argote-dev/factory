@@ -1,0 +1,17 @@
+00:00 +0: loading /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-4urflnz7/current-dart/test/resolver_sensitivity_test.dart
+00:00 +0: resolution stops as soon as asynchronous parent closure begins
+00:00 +0 -1: resolution stops as soon as asynchronous parent closure begins [E]
+  Expected: throws <Instance of 'StateError'>
+    Actual: <Closure: () => Object>
+     Which: returned <Instance of 'Object'>
+
+  package:matcher                            expect
+  test/resolver_sensitivity_test.dart 270:5  main.<fn>
+
+00:00 +0 -1: Some tests failed.
+
+Failing tests:
+  /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-4urflnz7/current-dart/test/resolver_sensitivity_test.dart: resolution stops as soon as asynchronous parent closure begins
+
+Consider enabling the flag chain-stack-traces to receive more detailed exceptions.
+For example, 'dart test --chain-stack-traces'.

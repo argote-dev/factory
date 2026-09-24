@@ -1,0 +1,6 @@
+00:00 +0: loading /private/tmp/factory-33-acceptance/example/test/modules_test.dart
+00:00 +0: /private/tmp/factory-33-acceptance/example/test/modules_test.dart: manual and generated modules preserve behavior and internal visibility
+00:00 +1: /private/tmp/factory-33-acceptance/example/test/example_flow_test.dart: Factory composition preserves the Provider user flow
+Profile Factory scope closed
+00:00 +2: /private/tmp/factory-33-acceptance/example/test/example_flow_test.dart: Provider-only composition preserves the Provider user flow
+00:00 +3: All tests passed!

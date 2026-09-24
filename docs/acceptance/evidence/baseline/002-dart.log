@@ -1,0 +1,21 @@
+Running with `skip-validation`. No client-side validation is done.
+Publishing factory_core 0.3.0 to https://pub.dev:
+├── CHANGELOG.md (<1 KB)
+├── LICENSE (1 KB)
+├── README.md (<1 KB)
+├── analysis_options.yaml (<1 KB)
+├── lib
+│   ├── factory_core.dart (<1 KB)
+│   └── src
+│       ├── annotations.dart (1 KB)
+│       ├── container.dart (17 KB)
+│       ├── factory.dart (4 KB)
+│       └── module.dart (<1 KB)
+├── pubspec.yaml (<1 KB)
+└── test
+    ├── changes_test.dart (9 KB)
+    ├── container_test.dart (10 KB)
+    └── resolver_test.dart (10 KB)
+
+Total compressed archive size: 13 KB.
+Wrote package archive at /private/tmp/factory-33-accepted/baseline/archives/factory_core.tar.gz

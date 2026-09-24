@@ -1,0 +1,50 @@
+{
+  "commit": "5f9cac4087a1ef4093dbd54da6a25890c01b1595",
+  "platform": "macOS-27.0-arm64-arm-64bit-Mach-O",
+  "dart": "Dart SDK version: 3.13.2 (stable) (Tue Aug 25 01:01:12 2026 -0700) on \"macos_arm64\"",
+  "flutter": "Flutter 3.47.2 \u2022 channel [user-branch] \u2022 https://github.com/flutter/flutter.git\nFramework \u2022 revision d3b14c8769 (4 weeks ago) \u2022 2026-08-26 16:07:51 -0700\nEngine \u2022 hash 1cf1c4773fb941c4c74a7f8bb144a8837596c0f4 (revision a804b26164) (28 days ago) \u2022 2026-08-26 18:46:13.000Z\nTools \u2022 Dart 3.13.2 \u2022 DevTools 2.60.0",
+  "commands": [
+    {
+      "cwd": ".",
+      "command": "flutter pub get",
+      "exit": 0,
+      "log": "setup.log"
+    },
+    {
+      "cwd": "example",
+      "command": "dart run build_runner build",
+      "exit": 0,
+      "log": "generation.log"
+    },
+    {
+      "cwd": "example",
+      "command": "git diff --exit-code -- lib/composition/registry.factory.dart",
+      "exit": 0,
+      "log": "drift.log"
+    },
+    {
+      "cwd": "example",
+      "command": "flutter test",
+      "exit": 0,
+      "log": "tests.log"
+    },
+    {
+      "cwd": "example",
+      "command": "flutter analyze",
+      "exit": 0,
+      "log": "analysis.log"
+    },
+    {
+      "cwd": "example",
+      "command": "flutter build web",
+      "exit": 0,
+      "log": "web.log"
+    },
+    {
+      "cwd": ".",
+      "command": "bash tool/verify_consumers.sh",
+      "exit": 0,
+      "log": "current-consumers.log"
+    }
+  ]
+}

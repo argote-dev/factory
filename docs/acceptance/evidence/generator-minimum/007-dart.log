@@ -1,0 +1,15 @@
+  1s compiling builders/aot
+  2s compiling builders/aot
+  3s compiling builders/aot
+  4s compiling builders/aot
+  5s compiling builders/aot
+  6s compiling builders/aot
+  7s compiling builders/aot
+  8s compiling builders/aot
+  9s compiling builders/aot
+  11s compiling builders/aot
+  12s compiling builders/aot
+  12s compiling builders/aot
+  0s factory_generator:factory_module on 3 inputs; lib/dependencies.dart
+  1s factory_generator:factory_module on 3 inputs: 1 output, 2 no-op
+  Built with build_runner/aot in 13s; wrote 1 output.

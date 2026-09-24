@@ -1,0 +1,48 @@
+
+00:00 +0: loading test/resolver_test.dart
+00:00 +0: test/resolver_test.dart: resolves during construction and later by declaration identity
+00:00 +1: test/container_test.dart: public composition diagnostics identify declarations and corrections
+00:00 +2: test/container_test.dart: public composition diagnostics identify declarations and corrections
+00:00 +2: test/resolver_test.dart: respects scoped and unique without adding a cache
+00:00 +3: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +4: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +5: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +6: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +7: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +8: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +9: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +10: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +11: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +12: test/changes_test.dart: overrides never recreate historical unique values without a resolution
+00:00 +13: test/container_test.dart: one thousand unique resolutions preserve ownership contracts
+00:00 +14: test/container_test.dart: one thousand unique resolutions preserve ownership contracts
+00:00 +15: test/container_test.dart: one thousand unique resolutions preserve ownership contracts
+00:00 +16: test/container_test.dart: one thousand unique resolutions preserve ownership contracts
+00:00 +17: test/changes_test.dart: observed unique failures recover after a later override
+00:00 +18: test/changes_test.dart: observed unique failures recover after a later override
+00:00 +18: test/container_test.dart: a subscription cleanup failure does not skip owned resource cleanup
+00:00 +19: test/container_test.dart: a subscription cleanup failure does not skip owned resource cleanup
+00:00 +20: test/container_test.dart: a subscription cleanup failure does not skip owned resource cleanup
+00:00 +21: test/changes_test.dart: a failed dependency chain recovers when its observed source changes
+00:00 +22: test/container_test.dart: cleanup can observe the same close future reentrantly
+00:00 +23: test/changes_test.dart: diamond changes build dependents once with consistent inputs
+00:00 +24: test/container_test.dart: failed eager opening exposes cleanup for partially constructed resources
+00:00 +25: test/changes_test.dart: explicit selectors update in place only when their value changes
+00:00 +26: test/container_test.dart: exposure validates registration and duplicate declared types
+00:00 +27: test/container_test.dart: exposure validates registration and duplicate declared types
+00:00 +27: test/changes_test.dart: failed recreation throws instead of serving an old value and recovers
+00:00 +28: test/container_test.dart: cycles report the declaration path
+00:00 +29: test/changes_test.dart: replacement retains old dependencies until their consumers close
+00:00 +30: test/container_test.dart: child local dependents use borrowed overrides without changing parent
+00:00 +31: test/changes_test.dart: watch recreates on replacement, read does not, and identity is stable
+00:00 +32: test/container_test.dart: cleanup attempts every owned unique value and aggregates failures
+00:00 +33: test/container_test.dart: cleanup attempts every owned unique value and aggregates failures
+00:00 +33: test/container_test.dart: close releases dependents before dependencies and awaits all cleanup
+00:00 +34: test/container_test.dart: close releases dependents before dependencies and awaits all cleanup
+00:00 +34: test/container_test.dart: eager dependency resolves its connections without registration order
+00:00 +35: test/container_test.dart: eager dependency resolves its connections without registration order
+00:00 +35: test/container_test.dart: unique creates a different object for each resolution
+00:00 +36: test/container_test.dart: unique creates a different object for each resolution
+00:00 +36: test/container_test.dart: declared dependencies stay lazy and are reused in their owning scope
+00:00 +37: test/container_test.dart: declared dependencies stay lazy and are reused in their owning scope
+00:00 +37: All tests passed!

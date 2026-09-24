@@ -1,0 +1,14 @@
+{
+  "origin": "Retrospective Dart consumer authored for acceptance. Frozen output verified byte-for-byte by regenerating with the actual v0.3.0 generator in --baseline-release. Not a file claimed to exist in that release.",
+  "generator_release": "https://github.com/argote-dev/factory/releases/tag/v0.3.0",
+  "generator_commit": "71fe8a4dd6a6d62cae4a072354c5852c89151ff2",
+  "files": {
+    "dart_generated/pubspec.yaml": "99be2e2cb6d5e1ab2da40eca7472e5b5bdb0db53491b28ad7985e43c2a46e7e6",
+    "dart_generated/.gitignore": "b5e25b40521aae0014e8bf06ef9b33e18167db1be4a327572370ff4a802450fb",
+    "dart_generated/analysis_options.yaml": "cba9300c4c0f6c7cb21f0b8a1c98b214168b6ada0dd5d4ce84fbdaf809767e16",
+    "dart_generated/test/public_contract_test.dart": "b9c5222c34304465aaf3176a028137bf1edf135f2777e239a3968cb576266c66",
+    "dart_generated/lib/registry.factory.dart": "bc1243d9c108968b7752a632fb264da184751fd974aab92fc5db52b782e007e6",
+    "dart_generated/lib/dependencies.dart": "f52cf269ba846829f431da7ce44d94fe1ebefafe979ade5c15470cff07243d6b",
+    "dart_generated/lib/registry.dart": "fa94b1175b0d259d2777193248056fb3cdde538627ecba49801bf626eb01bb25"
+  }
+}

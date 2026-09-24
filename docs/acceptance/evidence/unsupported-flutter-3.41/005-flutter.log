@@ -1,0 +1,9 @@
+Resolving dependencies...
+Note: meta is pinned to version 1.17.0 by flutter from the flutter SDK.
+See https://dart.dev/go/sdk-version-pinning for details.
+
+
+Because every version of flutter from sdk depends on meta 1.17.0 and analyzer >=10.0.2 <13.1.0 depends on meta ^1.18.0, flutter from sdk is incompatible with analyzer >=10.0.2 <13.1.0.
+And because every version of factory_generator depends on analyzer ^10.2.0, flutter from sdk is incompatible with factory_generator.
+So, because factory_flutter_consumer depends on both flutter from sdk and factory_generator ^1.0.0, version solving failed.
+Failed to update packages.

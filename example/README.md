@@ -11,11 +11,11 @@ The example's only runtime DI dependency is `factory_provider`; `factory_generat
 
 ```yaml
 dependencies:
-  factory_provider: ^0.3.0
+  factory_provider: ^1.0.0
   provider: ^6.1.5+1
 dev_dependencies:
   build_runner: ^2.15.1
-  factory_generator: ^0.3.0
+  factory_generator: ^1.0.0
 ```
 
 ```dart

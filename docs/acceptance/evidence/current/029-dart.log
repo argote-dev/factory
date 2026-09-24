@@ -1,0 +1,3 @@
+00:00 +0: loading test/public_contract_test.dart
+00:00 +0: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +1: All tests passed!

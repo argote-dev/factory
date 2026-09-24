@@ -1,0 +1,20 @@
+00:00 +0: loading test/interfaces_test.dart
+00:00 +0: test/interfaces_test.dart: external interfaces preserve typed resolution and observation
+00:00 +1: test/resolver_sensitivity_test.dart: resolves during construction and later by declaration identity
+00:00 +2: test/resolver_sensitivity_test.dart: respects scoped and unique without adding a cache
+00:00 +3: test/resolver_sensitivity_test.dart: uses the consumer owner scope and isolates local overrides
+00:00 +4: test/resolver_sensitivity_test.dart: reads current overrides without observing or recreating its consumer
+00:00 +5: test/resolver_sensitivity_test.dart: cleans late dependencies after consumers and preserves borrowed values
+00:00 +6: test/async_startup_test.dart: normal exit attempts every resource despite cleanup errors
+00:00 +7: test/async_startup_test.dart: normal exit attempts every resource despite cleanup errors
+00:00 +8: test/async_startup_test.dart: normal exit attempts every resource despite cleanup errors
+00:00 +9: test/async_startup_test.dart: normal exit attempts every resource despite cleanup errors
+00:00 +10: test/async_startup_test.dart: normal exit attempts every resource despite cleanup errors
+00:00 +11: test/async_startup_test.dart: normal exit attempts every resource despite cleanup errors
+00:00 +12: test/async_startup_test.dart: normal exit attempts every resource despite cleanup errors
+00:00 +13: test/async_startup_test.dart: normal exit attempts every resource despite cleanup errors
+00:00 +14: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +15: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +16: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +17: test/public_contract_test.dart: manual Dart consumer resolves and awaits public cleanup
+00:00 +18: All tests passed!

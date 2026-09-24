@@ -1,0 +1,42 @@
+
+00:00 +0: loading /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_change_notifier_test.dart
+00:01 +0: loading /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_change_notifier_test.dart
+00:02 +0: loading /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_change_notifier_test.dart
+00:03 +0: loading /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_change_notifier_test.dart
+00:03 +0: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_change_notifier_test.dart: ... late fields and methods without widgets
+00:03 +1: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: one hundred scope cycles balance listeners and owned cleanup
+00:03 +2: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: one hundred scope cycles balance listeners and owned cleanup
+00:03 +3: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: one hundred scope cycles balance listeners and owned cleanup
+00:03 +4: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: one hundred scope cycles balance listeners and owned cleanup
+00:03 +5: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: one hundred scope cycles balance listeners and owned cleanup
+00:03 +5: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: keeps exposed declarations lazy until Provider consumes them
+00:03 +6: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: keeps exposed declarations lazy until Provider consumes them
+00:03 +6: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... an exposed ChangeNotifier for existing Provider consumers
+00:03 +7: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... an exposed ChangeNotifier for existing Provider consumers
+00:03 +7: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: rebuilds an exposed dependent after a selected state change
+00:03 +8: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: rebuilds an exposed dependent after a selected state change
+00:03 +8: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: closes an owned notifier once and exposes completion
+00:03 +9: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: closes an owned notifier once and exposes completion
+00:03 +9: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: does not dispose a borrowed notifier
+00:03 +10: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: does not dispose a borrowed notifier
+00:03 +10: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: updates an exposed borrowed value when its identity changes
+00:03 +11: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: updates an exposed borrowed value when its identity changes
+00:03 +11: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: applies changes made to a reused overrides list
+00:03 +12: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: applies changes made to a reused overrides list
+00:03 +12: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... a changed configuration before applying its overrides
+00:03 +13: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... a changed configuration before applying its overrides
+00:03 +13: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: keeps a unique exposed value across unrelated scope rebuilds
+00:03 +14: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: keeps a unique exposed value across unrelated scope rebuilds
+00:03 +14: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... unconsumed exposed value lazy after an internal refresh
+00:03 +15: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... unconsumed exposed value lazy after an internal refresh
+00:03 +15: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... asynchronous cleanup failure through onClose and onError
+00:03 +16: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... asynchronous cleanup failure through onClose and onError
+00:03 +16: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... dependencies when a child rebuilds a local dependent
+00:03 +17: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... dependencies when a child rebuilds a local dependent
+00:03 +17: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... failed recreation instead of retaining a Provider value
+00:03 +18: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: ... failed recreation instead of retaining a Provider value
+00:03 +18: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: preserves child state while an exposed value is replaced
+00:03 +19: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: preserves child state while an exposed value is replaced
+00:03 +19: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: notifies Provider consumers after an in-place update
+00:03 +20: /private/var/folders/s1/8wyzb0hs6s7bvd4_fwnxdt1r0000gn/T/factory-hosted-2pkmmwqi/factory_provider/test/factory_scope_test.dart: notifies Provider consumers after an in-place update
+00:03 +20: All tests passed!

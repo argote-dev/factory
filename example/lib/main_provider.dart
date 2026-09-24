@@ -38,11 +38,24 @@ class ProviderExampleApp extends StatelessWidget {
               title: 'Provider only',
               onOpenProfile: () => Navigator.of(navigatorContext).push(
                 MaterialPageRoute<void>(
-                  builder: (_) => ChangeNotifierProvider(
-                    create: (context) => ProfileController(
-                      context.read<UserRepository>(),
-                      context.read<ProfileFlowMonitor>(),
-                    ),
+                  builder: (_) => MultiProvider(
+                    providers: [
+                      ChangeNotifierProvider(
+                        create: (_) => Session('Grace Hopper'),
+                      ),
+                      Provider(
+                        create: (context) => UserRepository(
+                          context.read<LocalProfileClient>(),
+                          context.read<Session>(),
+                        ),
+                      ),
+                      ChangeNotifierProvider(
+                        create: (context) => ProfileController(
+                          context.read<UserRepository>(),
+                          context.read<ProfileFlowMonitor>(),
+                        ),
+                      ),
+                    ],
                     child: const ProfilePage(),
                   ),
                 ),

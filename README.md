@@ -1,10 +1,6 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/argote-dev/factory/main/docs/assets/factory-logo.png" alt="Factory logo" width="180">
-</p>
-
 # Factory
 
-[![Verify](https://github.com/argote-dev/factory/actions/workflows/verify.yml/badge.svg)](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
+[CI verification](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
 
 Dependency injection for Flutter apps that already use Provider. Declare how
 objects are built, install a module, and keep using `context.read`,
@@ -14,49 +10,119 @@ Factory is an initial implementation under development. The optional generator
 collects declarations; it does not annotate your business classes or infer their
 constructors.
 
-## Architecture at a glance
+## Quick integration guide
 
-```mermaid
-flowchart LR
-  subgraph Composition
-    D["Factory&lt;T&gt;<br/>constructor + policies"]
-    G["Optional generator<br/>@Register + @FactoryRegistry"]
-    M["FactoryModule<br/>factories + expose"]
-    D --> M
-    G --> M
-  end
+### 1. Add the dependencies
 
-  subgraph Scope[Scope boundary]
-    S["FactoryScope<br/>Flutter lifecycle"]
-    C["FactoryContainer<br/>resolution graph"]
-    V["Owned and borrowed instances<br/>scoped or unique"]
-    S -->|owns| C
-    C -->|"FactoryRef read / watch / select"| V
-  end
+The Flutter runtime requires Flutter 3.19+ and Dart 3.3+. Add these entries to
+an existing Flutter application's `pubspec.yaml`, then run `flutter pub get`:
 
-  O["Overrides + local factories"] --> S
-  M -->|install| S
-  V -. observed changes .-> C
-
-  C -->|exposed factories only| P["Provider bridge"]
-  P --> W["Widgets<br/>context.read / watch / select"]
-  C -->|direct read| T["Dart tests and services"]
-  C -->|reverse dependency order| X["Async cleanup"]
+```yaml
+dependencies:
+  flutter:
+    sdk: flutter
+  factory_provider: ^0.3.0
+  provider: ^6.1.5+1
 ```
 
-Declarations describe construction and lifecycle without creating values.
-Modules install those declarations into a scope; overrides and local factories
-can replace or reconnect parts of the graph. The container resolves lazily,
-tracks dependencies and ownership, reacts to explicit observations, and cleans
-up dependents before dependencies. In Flutter, only declarations listed in
-`expose` cross the Provider bridge, so existing widgets keep using the standard
-Provider APIs while Factory retains lifecycle ownership.
+Keep `provider` as a direct dependency when your widgets import it. Manual setup
+needs no annotations or code generation. For standalone Dart, use
+[`factory_core`](packages/factory_core/README.md) with `FactoryContainer` instead.
 
-## Manual setup
+### 2. Declare, expose, and install a dependency
+
+This complete `lib/main.dart` example creates a counter, exposes it to Provider,
+and installs its module above the widgets that consume it:
 
 ```dart
 import 'package:factory_provider/factory_provider.dart';
-import 'package:flutter/material.dart' hide Factory;
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class Counter extends ChangeNotifier {
+  int _value = 0;
+  int get value => _value;
+
+  void increment() {
+    _value++;
+    notifyListeners();
+  }
+}
+
+final counter = Factory<Counter>(
+  (_) => Counter(),
+  dispose: (value) => value.dispose(),
+);
+
+final counterModule = FactoryModule(
+  factories: [counter],
+  expose: [counter],
+);
+
+void main() {
+  runApp(
+    FactoryScope(
+      modules: [counterModule],
+      child: const MaterialApp(home: CounterPage()),
+    ),
+  );
+}
+
+class CounterPage extends StatelessWidget {
+  const CounterPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final value = context.watch<Counter>().value;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Factory counter')),
+      body: Center(child: Text('Count: $value')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => context.read<Counter>().increment(),
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}
+```
+
+Keep declarations and modules stable, outside widget `build` methods. If you
+also import `package:flutter/foundation.dart`, use `hide Factory` on that import
+to avoid a name collision with Flutter's own `Factory` class.
+
+### 3. Run and integrate into your app
+
+Run `flutter run`. The screen starts at `Count: 0`; tapping **+** increments it.
+`context.watch` rebuilds the widget when the counter notifies listeners, while
+`context.read` accesses it from the button callback without subscribing.
+Factory creates the counter on first use and disposes it when its scope closes.
+
+In an existing app, put `FactoryScope` above the subtree that needs the
+module's exposed types. Keep using `context.read`, `context.watch`,
+`context.select`, and `Consumer` in your widgets. Move construction into Factory
+declarations and register cleanup callbacks for resources they own. To reuse an
+instance already owned by Provider, follow
+[existing dependencies and nested flows](#existing-dependencies-and-nested-flows).
+
+See the [runnable example](example/README.md) for repositories, nested scopes,
+and equivalent Factory and Provider-only entrypoints.
+
+## How Factory fits together
+
+- **`Factory<T>`** declares how to construct a dependency and manage its lifetime.
+- **`FactoryModule`** groups declarations; `expose` selects those available to widgets.
+- **`FactoryScope`** installs modules and owns their container for a Flutter subtree.
+- **`FactoryContainer`** resolves dependencies and manages their cleanup, including
+  in Dart tests without widgets.
+
+Dependencies resolve lazily. Only `expose` entries cross the Provider bridge;
+internal dependencies remain available to other factories through `FactoryRef`.
+
+## Compose dependencies
+
+```dart
+import 'package:factory_provider/factory_provider.dart';
+import 'package:flutter/material.dart';
 
 final client = Factory<ApiClient>(
   (_) => ApiClient(),
@@ -213,8 +279,7 @@ original error and an awaitable `cleanup` future.
 Owned unique values with cleanup and replaced scoped generations remain alive
 until their scope closes, because previously returned references may still be in
 use. Direct unique resolutions without cleanup, observation or a retained resolver
-are not retained. Use short
-scopes for short-lived resources. `FactoryScope.onClose` exposes the close future;
+are not retained. Use short scopes for short-lived resources. `FactoryScope.onClose` exposes the close future;
 `onError` handles cleanup failures (the default reports through FlutterError).
 Unmounting starts cleanup without waiting. For an explicitly awaited close, use
 `FactoryScope.of(context).close()` before leaving a flow. Dispose callbacks should
@@ -223,8 +288,15 @@ not resolve more dependencies or await the scope's own closing future.
 ## Optional annotations
 
 Flutter applications add only `factory_provider` at runtime and add `factory_generator`
-plus `build_runner` as development dependencies. Standalone Dart applications
-use `factory_core` instead.
+plus `build_runner` as development dependencies. The generator requires Dart
+3.11+; the manual runtime integration above keeps its Dart 3.3+ minimum.
+Standalone Dart applications use `factory_core` instead.
+
+```yaml
+dev_dependencies:
+  factory_generator: ^0.3.0
+  build_runner: ^2.15.1
+```
 
 ```dart
 // lib/composition/factories.dart
@@ -246,62 +318,13 @@ Run `dart run build_runner watch`. Import `composition/registry.factory.dart`
 and install its `appModule`. Generated modules include internal/eager declarations
 as well as the exposed subset. The manual equivalent remains available.
 
-## Integration, propagation, and closure
+## Further reading
 
-```mermaid
-flowchart LR
-  D["Factory declaration"] --> M["FactoryModule"]
-  M --> S["Factory scope"] --> C["FactoryContainer"]
-  C --> I["Internal dependency"]
-  C -->|"expose only"| P["Provider bridge"] --> W["Widget"]
-```
-
-A declaration enters a module and is installed in a Factory scope. The
-container can resolve every installed declaration for composition, but only the
-module's `expose` subset crosses the Provider bridge to widgets. Module and
-scope are different concepts. Start with the
-[executable quick start](example/README.md) and the
-[public API guide](docs/api-guide.md). Review this diagram whenever module
-exposure or the Flutter bridge changes.
-
-```mermaid
-flowchart LR
-  E["Override or observed event"] --> G["Propagation wave"]
-  G --> R["read: unchanged"]
-  G --> W["watch: replacement"]
-  G --> Q["select: changed selection"]
-  W --> C{"Policy"}
-  Q --> C
-  C -->|recreate| N["New instance"]
-  C -->|update| U["Update current instance"]
-  N --> P["Provider notification"]
-  U --> P
-```
-
-`read` keeps its existing connection. `watch` reacts to instance replacement;
-`select` additionally reacts when its selected state changes. The declaration's
-explicit policy either recreates or updates, after which an exposed declaration
-notifies Provider. There is no rollback or asynchronous construction. Review
-this diagram when observation or propagation semantics change.
-
-```mermaid
-flowchart TD
-  X["Close requested"] --> H["Close child scopes"]
-  H --> O["Cancel observers"]
-  O --> D["Release dependents"]
-  D --> R["Release dependencies"]
-  R --> F["Complete close Future"]
-  D -. failure .-> A["Collect all errors"]
-  R -. failure .-> A
-  A --> F
-```
-
-Closing rejects new resolution immediately, closes children before their
-parent, cancels observers, and releases dependents before dependencies. Every
-cleanup is attempted; aggregated failures complete the close future with
-`FactoryCleanupException` and reach `FactoryScope.onError`. Factory does not
-release delivered references early. Review this diagram when ownership or
-closure changes. See the [memory playbook](docs/memory-profiling.md).
+- [Runnable integration example](example/README.md): incremental adoption,
+  generated modules, nested scopes, and troubleshooting.
+- [Public API guide](docs/api-guide.md): declarations, scopes, and lifecycle contracts.
+- [Memory profiling playbook](docs/memory-profiling.md): cleanup and repeated navigation.
+- [Compatibility and validation](docs/support.md): SDK requirements and platform evidence.
 
 ## Repository development
 

@@ -1,5 +1,5 @@
 name: factory_example
-description: Provider adoption, generated modules and removal of Factory.
+description: Manual Factory setup, optional annotations, and Provider-only composition.
 publish_to: none
 version: 1.0.0+1
 environment:

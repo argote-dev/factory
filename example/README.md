@@ -1,118 +1,107 @@
-# Factory executable quick start
+# Factory example
 
-This app demonstrates incremental adoption of `factory_provider` in an existing Provider
-application. Business and presentation code use ordinary constructors and
-Provider APIs; only `lib/composition/` knows about Factory.
+One profile flow, three ways to wire it:
 
-## Generated route
+| Variant | Entrypoint | Module setup |
+| --- | --- | --- |
+| Manual usage | `lib/main.dart` | Explicit `FactoryModule` values |
+| Annotations | `lib/main_annotations.dart` | Modules generated from `@Register` |
+| Provider only | `lib/main_provider.dart` | Direct Provider composition |
 
-The example's only runtime DI dependency is `factory_provider`; `factory_generator` and
-`build_runner` are optional development dependencies. Read these files in order:
+All variants share the same business classes and widgets. Start with manual
+usage; annotations only automate the module lists.
 
-```yaml
-dependencies:
-  factory_provider: ^1.0.0
-  provider: ^6.1.5+1
-dev_dependencies:
-  build_runner: ^2.15.1
-  factory_generator: ^1.0.0
-```
-
-```dart
-final greeting = Factory<String>((_) => 'hello');
-final manualModule = FactoryModule(
-  factories: [greeting],
-  expose: [greeting],
-);
-
-@FactoryRegistry(runtime: FactoryRuntime.flutter)
-void configureFactories() {}
-
-FactoryScope(
-  modules: [appModule], // or manualModule without generation
-  child: Builder(
-    builder: (context) => Text(context.watch<String>()),
-  ),
-);
-```
-
-1. `lib/domain/` and `lib/presentation/` — Factory-free business and UI code.
-2. `lib/composition/factories.dart` — declarations, ownership and exposure.
-3. `lib/composition/registry.dart` — Flutter runtime selection and scan entrypoint.
-4. `lib/composition/registry.factory.dart` — deterministic generated modules.
-5. `lib/main.dart` — root and flow scope installation.
-6. `test/modules_test.dart` and `test/example_flow_test.dart` — public contracts.
+## 1. Manual usage
 
 From this directory:
 
 ```sh
 flutter pub get
-dart run build_runner build --delete-conflicting-outputs
-git diff --exit-code -- lib/composition/registry.factory.dart
-flutter analyze
-flutter test
-flutter run
+flutter run -t lib/main.dart
 ```
 
-`@FactoryRegistry(runtime: FactoryRuntime.flutter)` makes generated output import
-the public Flutter facade. The root entrypoint borrows an existing `Session`,
-installs `appModule`, and creates a child scope for the profile flow. Dependencies
-remain lazy until the profile is loaded.
+Read these files in order:
 
-The equivalent manual module is exercised beside `appModule` in
-`test/modules_test.dart`: construct `FactoryModule(factories: [...], expose:
-[...])` and pass it to the same `FactoryScope`. No generator is required.
+1. [composition/factories.dart](lib/composition/factories.dart) declares how dependencies are created and disposed.
+2. [composition/modules.dart](lib/composition/modules.dart) groups them and exposes the values widgets need.
+3. [main.dart](lib/main.dart) passes the manual modules to the shared app.
+4. [composition/factory_example_app.dart](lib/composition/factory_example_app.dart) installs the root and profile scopes.
 
-## Adoption, nested scope, and ownership
+For example, the profile module contains one declaration:
 
-The root scope borrows the Provider-owned `Session` with `overrideWithValue`;
-Factory never disposes it. The profile route installs a child module. Its
-controller and the root client are Factory-owned because their declarations
-construct them with cleanup callbacks. Closing the route completes `onClose`,
-releases the controller, and reports failures through `onError`; closing the root
-later releases the client.
+```dart
+final profileModule = FactoryModule(
+  factories: [profileController],
+  expose: [profileController],
+);
+```
 
-The profile route also replaces `session` with an owned `Grace Hopper` session
-and lists `userRepository` in `local`. The child repository therefore resolves
-the replacement while the root still displays `Ada Lovelace`; leaving the route
-disposes the replacement and restores the unchanged parent view. The route's
-`onClose` callback explicitly observes successful completion, and `onError`
-reports an aggregated failure with route context.
+The manual entrypoint needs no annotations or generated files. In your own app,
+add `factory_provider` and `provider`; `factory_generator` and `build_runner`
+are only needed for the next variant. This repository includes both as development
+dependencies so you can run either example.
 
-Use `overrides` for a local value or constructor. Add an inherited dependent to
-`local` when it must be rebuilt against that child override; the parent remains
-unchanged. Keep only dependencies needed by widgets in `expose`; internal
-dependencies stay inside composition. For repeated navigation and asynchronous
-cleanup investigations, follow the
-[memory profiling playbook](../docs/memory-profiling.md).
+## 2. With annotations
 
-The dedicated `lib/memory_profile.dart` entrypoint exposes deterministic runtime,
-scope, `unique`, replacement, and propagation scenarios through the VM Service.
-It is intentionally separate from the tutorial UI and is run in profile mode as
-documented by the playbook.
+The annotation variant reuses the manual declarations and replaces the module lists:
 
-## Removal route
+1. [composition/annotations.dart](lib/composition/annotations.dart) registers each declaration through an annotated alias.
+2. [composition/registry.dart](lib/composition/registry.dart) selects the input file and Flutter runtime.
+3. [composition/registry.factory.dart](lib/composition/registry.factory.dart) contains the generated modules.
+4. [main_annotations.dart](lib/main_annotations.dart) passes them to the shared app.
 
-`lib/main_provider.dart` wires the same domain and presentation directly with
-Provider and does not import Factory:
+```dart
+import 'package:factory_provider/factory_provider.dart';
+import 'factories.dart' as declarations;
+
+@Register(module: 'profile', expose: true)
+final profileController = declarations.profileController;
+```
+
+Aliases preserve the same `Factory` identities in both variants. In your own
+app, you can instead put `@Register` directly on a `final Factory<T>` declaration.
+Keep business classes free of annotations.
+
+```sh
+dart run build_runner build
+flutter run -t lib/main_annotations.dart
+```
+
+Generation requires Dart 3.11+. Run the build again after changing registrations;
+never edit `.factory.dart` files by hand.
+
+## Try the flow
+
+1. The home screen shows **Ada Lovelace**.
+2. Tap **Open profile**, then **Load local profile**: the child flow loads
+   **Grace Hopper profile**.
+3. Go back: the home screen still shows Ada and **Closed profile flows: 1**.
+
+Provider owns the root session and flow monitor; Factory borrows them through
+`overrideWithValue`. The child scope owns a replacement session and controller.
+`local: [userRepository]` rebuilds the repository against the child session.
+Closing the flow disposes its owned values; closing the app scope closes its client.
+
+## 3. Provider only
 
 ```sh
 flutter run -t lib/main_provider.dart
+```
+
+[main_provider.dart](lib/main_provider.dart) wires the same flow directly with
+Provider. Compare the compositions to see how to adopt or remove Factory without
+changing the domain classes or widgets.
+
+## Verify
+
+```sh
+dart run build_runner build
+flutter analyze
 flutter test
 ```
 
-The shared behavior test proves that removing Factory changes composition only,
-not widgets or business classes.
+The tests check the user flow in all three variants and compare manual and
+generated module resolution, exposure, and cleanup.
 
-## Troubleshooting
-
-- **Declaration is not installed:** install it through a module or `local` in
-  the scope that owns the dependent.
-- **External declaration needs an override:** supply `overrideWithValue` for a
-  borrowed instance or `overrideWith` for a Factory-owned constructor.
-- **Duplicate exposed type:** expose only one declaration of that type in a
-  scope; keep the other internal or expose it in another scope.
-- **Generated file missing:** run `dart run build_runner build
-  --delete-conflicting-outputs` and import `registry.factory.dart`.
-- **Wrong generated facade:** select `FactoryRuntime.flutter` for Flutter or
-  `FactoryRuntime.dart` for standalone Dart. Keep one registry per library.
+For memory profiling, use the separate `lib/memory_profile.dart` entrypoint and
+follow the [profiling playbook](../docs/memory-profiling.md).

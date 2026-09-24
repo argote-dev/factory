@@ -195,6 +195,13 @@ def verify_history():
             ['git', 'show', f'{release_commit}:tool/consumer_contracts/{path}'], cwd=ROOT)
         if (base / path).read_bytes() != released or digest(released) != expected:
             raise RuntimeError(f'Historical consumer differs from release: {path}')
+    generated = ROOT / 'tool/consumer_contracts/historical/0.3.0-generated'
+    frozen = json.loads((generated / 'provenance.json').read_text())
+    if frozen['generator_commit'] != release_commit:
+        raise RuntimeError('Frozen generated Dart targets a different baseline release')
+    for path, expected in frozen['files'].items():
+        if digest((generated / path).read_bytes()) != expected:
+            raise RuntimeError(f'Frozen generated Dart consumer edited: {path}')
     return base
 
 
@@ -276,8 +283,6 @@ def main():
     mode.add_argument('--probes-only', action='store_true')
     mode.add_argument('--generator-only', action='store_true')
     mode.add_argument('--baseline-release', action='store_true', help='Build and execute immutable v0.3.0 runtime baseline')
-    parser.add_argument('--flutter-generation', action='store_true',
-                        help='Include Flutter historical/current regeneration in generator minimum gate')
     parser.add_argument('--lower-dependencies', action='store_true')
     args = parser.parse_args()
     args.output = args.output.resolve()
@@ -292,7 +297,7 @@ def main():
                     version=version, runtime_only=args.runtime_only, commands=runner.records, result='failed')
     try:
         evidence['dart'] = runner.run(['dart', '--version'], ROOT).strip()
-        if not args.generator_only or args.flutter_generation:
+        if not args.generator_only:
             evidence['flutter'] = runner.run(['flutter', '--version'], ROOT).strip()
         if args.baseline_release and args.archives:
             raise RuntimeError('Baseline must be built from its recorded release commit')
@@ -342,13 +347,14 @@ def main():
                     runner.run([executable, 'pub', 'publish', '--dry-run'], package, env)
                     runner.run([executable, 'test', *(['--no-pub'] if executable == 'flutter' else [])], package, env)
                     runner.run([executable, 'analyze', *(['--no-pub'] if executable == 'flutter' else []), 'lib', 'test'], package, env)
-                for label, base in [('current', ROOT / 'tool/consumer_contracts'), ('historical', history)]:
+                for label, base in [('current', ROOT / 'tool/consumer_contracts'),
+                                    ('historical', history),
+                                    ('previous-generation', history.parent / '0.3.0-generated')]:
                     for kind in ('dart', 'flutter', 'dart_generated'):
                         if args.probes_only and (label != 'current' or kind != 'dart'):
                             continue
                         if args.generator_only and kind != 'dart_generated':
-                            if not (args.flutter_generation and kind == 'flutter'):
-                                continue
+                            continue
                         if not (base / kind).exists():
                             continue
                         verify_consumer(runner, base / kind, scratch / f'{label}-{kind}',

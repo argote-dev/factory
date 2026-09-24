@@ -10,7 +10,7 @@ configured workflow, platform scaffold or successful dry-run is not a release.
 | --- | --- | --- | --- |
 | Manual Dart runtime | Dart 3.3.0 | Candidate core; no Flutter or generator | Packaged core tests, analysis, current/historical consumers |
 | Provider runtime, including already generated modules | Flutter 3.19.0 / Dart 3.3.0 | Candidate core + adapter; Provider **6.1.5+1** fixed; no generator installed | Packaged runtime tests, analysis, manual/generated and historical consumers |
-| Optional generation | Flutter 3.41.0 / Dart 3.11.0 | Coordinated candidate generator/core | Packaged builder tests, analysis, generated Dart/Flutter consumers and historical regeneration |
+| Optional generation | Dart 3.11.0, without Flutter | Coordinated candidate generator/core | Packaged builder tests, analysis, current Dart consumer and frozen 0.3-generated Dart output/regeneration |
 | Current Dart/Flutter composition and generation | Flutter 3.47.2 / Dart 3.13.2 | Coordinated candidate packages; exact dependency resolutions in evidence.json | All packaged tests, current and 0.3 consumers, existing output, regeneration and drift |
 
 The runtime minimums are retained throughout 1.x. Generator SDK increases follow
@@ -22,7 +22,10 @@ analyzer/build/source_gen or every combination of Factory minor releases.
 
 Historical 0.3 generated output is tested on the candidate runtime before
 regeneration. Regeneration is supported with the coordinated candidate generator
-on Dart 3.11 and the fixed current SDK. A runtime-only application can retain
+on Dart 3.11 for pure Dart and on the fixed current Flutter SDK for Flutter.
+Flutter 3.41.0 with the generator is unsupported: its `meta 1.17.0` SDK pin
+conflicts with analyzer 10.2 requiring `meta >=1.18.0`. This does not affect
+the runtime-only Flutter 3.19 minimum. No overrides are used to bypass that conflict. A runtime-only application can retain
 existing generated output without installing the generator.
 
 ## Evidence and reproduction

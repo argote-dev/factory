@@ -91,13 +91,14 @@ Use the same archives under the other SDKs (put that SDK first on PATH):
 
 ```sh
 python tool/verify_release.py --archives build/acceptance/current/archives --runtime-only --lower-dependencies --output build/acceptance/runtime-minimum
-python tool/verify_release.py --archives build/acceptance/current/archives --generator-only --flutter-generation --output build/acceptance/generator-minimum
+python tool/verify_release.py --archives build/acceptance/current/archives --generator-only --output build/acceptance/generator-minimum
 ```
 
 The runtime job uses Flutter 3.19.0 / Dart 3.3.0 and installs no generator;
 `--lower-dependencies` fixes Provider to its declared lower bound 6.1.5+1.
-The generator job uses Flutter 3.41.0 / Dart 3.11.0 so it also regenerates the
-historical Flutter consumer; pure Dart generation is checked in the same job. Current CI pins Flutter
+The generator job uses Dart 3.11.0 without Flutter and regenerates frozen output
+previously verified with the 0.3 generator. Historical Flutter output regenerates
+in the compatible current Flutter job; see the explicit combinations in support.md. Current CI pins Flutter
 3.47.2 / Dart 3.13.2. Each output includes logs, resolved package versions,
 archive SHA-256 hashes, commit, SDK versions and expected failures. A dirty
 worktree run is diagnostic, not the final acceptance of a commit.

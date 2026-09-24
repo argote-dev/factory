@@ -16,3 +16,9 @@ not as a claim of a break within 1.x.
 After a real 1.0 release, archive its actual public consumers under `1.0.0/`,
 record its immutable release commit and file hashes, and add that baseline to the
 same harness. Do not label this unpublished candidate as a historical release.
+
+`0.3.0-generated/` is a retrospective pure-Dart consumer whose frozen module is
+verified by regenerating with the actual 0.3 release generator, then with the
+candidate on both Dart 3.11 and the current SDK. Its provenance distinguishes it
+from the Flutter module actually present in the release. This avoids pretending
+Flutter 3.41's meta pin is compatible with the generator's analyzer dependency.

@@ -1,6 +1,6 @@
 name: factory_generator
 description: Optional build_runner generation of Factory modules from annotated declarations.
-version: 0.3.0
+version: 1.0.0
 repository: https://github.com/argote-dev/factory
 issue_tracker: https://github.com/argote-dev/factory/issues
 environment:
@@ -8,7 +8,7 @@ environment:
 dependencies:
   analyzer: ^10.2.0
   build: ^4.0.0
-  factory_core: ^0.3.0
+  factory_core: ^1.0.0
   glob: ^2.1.2
   source_gen: ^4.2.4
 dev_dependencies:

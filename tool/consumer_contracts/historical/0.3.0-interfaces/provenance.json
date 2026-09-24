@@ -1,0 +1,9 @@
+{
+  "origin": "Retrospective external implementer fixture authored for the 1.0 acceptance, verified against released 0.3.0; not present in that release.",
+  "runtime_release": "https://github.com/argote-dev/factory/releases/tag/v0.3.0",
+  "runtime_commit": "71fe8a4dd6a6d62cae4a072354c5852c89151ff2",
+  "files": {
+    "pubspec.yaml": "2835488cbfc4c44caf8b846e2a809422ff860df364bacabca36bb8f0885be247",
+    "test/interfaces_test.dart": "b13309d179a13ad3d4b1b013002680b89e251091381f1e111affd35485f59b18"
+  }
+}

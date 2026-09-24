@@ -23,7 +23,7 @@ jobs:
       - uses: actions/checkout@v7
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.44.0'
+          flutter-version: '3.47.2'
           cache: true
       - run: flutter pub get
       - run: dart pub get
@@ -43,6 +43,7 @@ jobs:
       - run: dart run build_runner build
         working-directory: example
       - run: git diff --exit-code -- example/lib/composition/registry.factory.dart
+      - run: bash tool/verify_consumers.sh
       - run: flutter test
         working-directory: example
       - run: flutter analyze
@@ -56,8 +57,37 @@ jobs:
         run: flutter build windows
         working-directory: example
 
+  artifacts:
+    timeout-minutes: 45
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          cache: true
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - run: pip install -r tool/requirements.txt
+      - run: python tool/verify_release.py --baseline-release --output build/acceptance/baseline
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: baseline-evidence
+          path: build/acceptance/baseline
+      - run: python tool/verify_release.py --output build/acceptance/current
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: current-evidence
+          path: build/acceptance/current
+
   runtime-minimum:
-    timeout-minutes: 20
+    needs: artifacts
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -65,37 +95,41 @@ jobs:
         with:
           flutter-version: '3.19.0'
           cache: true
-      - name: Prepare runtime-only package
-        shell: bash
-        run: |
-          mkdir -p runtime_check/packages
-          cp pubspec.yaml pubspec_overrides.yaml analysis_options.yaml runtime_check/
-          cp -R lib test runtime_check/
-          cp -R packages/factory_core runtime_check/packages/
-      - run: flutter pub get
-        working-directory: runtime_check
-      - run: flutter test
-        working-directory: runtime_check
-      - run: flutter analyze lib test
-        working-directory: runtime_check
-      - run: dart pub get
-        working-directory: packages/factory_core
-      - run: dart test
-        working-directory: packages/factory_core
-      - run: dart analyze
-        working-directory: packages/factory_core
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: current-evidence
+          path: build/current
+      - run: pip install -r tool/requirements.txt
+      - run: python tool/verify_release.py --archives build/current/archives --runtime-only --lower-dependencies --output build/acceptance/runtime-minimum
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runtime-minimum-evidence
+          path: build/acceptance/runtime-minimum
 
   generator-minimum:
-    timeout-minutes: 20
+    needs: artifacts
+    timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: '3.11.0'
-      - run: dart pub get
-        working-directory: packages/factory_generator
-      - run: dart test
-        working-directory: packages/factory_generator
-      - run: dart analyze
-        working-directory: packages/factory_generator
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+      - uses: actions/download-artifact@v4
+        with:
+          name: current-evidence
+          path: build/current
+      - run: pip install -r tool/requirements.txt
+      - run: python tool/verify_release.py --archives build/current/archives --generator-only --output build/acceptance/generator-minimum
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: generator-minimum-evidence
+          path: build/acceptance/generator-minimum

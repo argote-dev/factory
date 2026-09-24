@@ -1,6 +1,6 @@
 # Public API decision guide
 
-This guide is an inventory and decision matrix for Factory 0.3.x. Its terms
+This guide is an inventory and decision matrix for the Factory 1.0 candidate. Its terms
 follow [the project glossary](../CONTEXT.md), and every behavior is exercised by
 the public-API tests linked below.
 
@@ -73,19 +73,36 @@ Public errors are `StateError`/`ArgumentError` for invalid composition,
 cleanup future), and `FactoryCleanupException` for aggregated cleanup failures.
 Flutter closure is observable with `onClose` and failures with `onError`.
 
-## Stability toward 1.0
+## Stable surface for 1.x
 
-Candidates to stabilize are declarations, modules, resolution operations,
-ownership rules, ordered closure, Flutter scope callbacks, annotations, and the
-three public error shapes. Package boundaries remain intentional:
+The candidate retains the 0.3 names, including `Lifetime.scoped`,
+`ChangePolicy`, `Register` and `FactoryRegistry`. No rename or runtime API
+migration is required. Stability covers signatures **and documented behavior**.
+See [the evolution policy](compatibility-policy.md).
 
-- `factory_core`: Dart runtime and annotations; no Flutter dependency.
-- `factory_provider`: Flutter/Provider facade; re-exports the core API.
-- `factory_generator`: optional development dependency.
+| Public entrypoint / surface | Supported use | Contract evidence |
+| --- | --- | --- |
+| `factory_core.dart`: `Factory` (including external, overrides, type visitor), `Lifetime`, `ChangePolicy`, `FactoryOverride` | Construct declarations; obtain overrides from declarations | [container tests](../packages/factory_core/test/container_test.dart), [external interfaces](../tool/consumer_contracts/dart/test/interfaces_test.dart) |
+| `FactoryModule`: factories, expose | Construct modules; lists are immutable | [Dart consumer](../tool/consumer_contracts/dart/test/public_contract_test.dart), [Flutter consumer](../tool/consumer_contracts/flutter/test/public_contract_test.dart) |
+| `FactoryContainer`: constructor, parent, read, exposedFactories, setOverrides, addListener, close | Install, resolve, observe invalidations and await closure | [container](../packages/factory_core/test/container_test.dart), [changes](../packages/factory_core/test/changes_test.dart) |
+| `FactoryRef`, `FactoryResolver`, `FactoryVisitor<R>` | **External implementation supported**; all members are part of the compatibility contract | [external interfaces](../tool/consumer_contracts/dart/test/interfaces_test.dart), [resolver](../packages/factory_core/test/resolver_test.dart) |
+| `FactoryObserver`; create, update, dispose and unsubscribe callbacks | Supply callbacks with the declared synchronous / FutureOr signatures | [changes](../packages/factory_core/test/changes_test.dart), [cleanup](../packages/factory_core/test/container_test.dart) |
+| `FactoryInitializationException`: error, stackTrace, cleanup; `FactoryCleanupException`: errors | Inspect original errors and await cleanup; message text is diagnostic, not stable | [container](../packages/factory_core/test/container_test.dart) |
+| `Register`, `FactoryRegistry`, `FactoryRuntime` (also exported by `src/annotations.dart`) | Annotate composition; select Dart or Flutter generation | [generator](../packages/factory_generator/test/factory_module_builder_test.dart) |
+| `factory_provider.dart`: all core exports plus `FactoryScope` | Construct scopes, use of/maybeOf, modules/local/overrides, onClose/onError | [scope](../test/factory_scope_test.dart), [Flutter consumer](../tool/consumer_contracts/flutter/test/public_contract_test.dart) |
+| `FactoryChangeNotifier`: constructor, protected resolve, dispose | **Subclassing supported**; call super.dispose; Factory coupling is opt-in | [notifier](../test/factory_change_notifier_test.dart) |
+| `factory_generator.dart`: `FactoryModuleBuilder`; `builder.dart`: `factoryModuleBuilder` | Construct/configure the builder; consume generated modules | [generator](../packages/factory_generator/test/factory_module_builder_test.dart) |
 
-The spelling of policies and annotations remains provisional during 0.x. If a
-name changes, the preferred migration is a deprecated forwarding member for one
-minor line plus a changelog recipe. Structural changes require a consumer test
-before implementation. The Dart 3.3 / Flutter 3.19 minimums remain unchanged.
-Before 1.0, validate published-package consumer fixtures, collect the memory
-baselines, and review provisional names; this work does not publish 1.0.
+Only the three abstract interfaces above promise third-party implementations;
+`FactoryChangeNotifier` is the supported extension point. Other concrete classes
+are consumed via their documented constructors and members; implementing or
+subclassing them is not a supported customization mechanism. Imports under
+`src/` are internal, except the already exported annotation declarations; prefer
+the package entrypoints. Generated module names, runtime imports and semantics
+are contractual; formatting and internal builder implementation are not.
+
+Public composition failures use `StateError` / `ArgumentError`; no exact message
+text is promised. Two declarations of one type retain separate identities inside
+Factory, but only one can be exposed per type in a scope. `unique` means each
+Factory resolution, not each Provider read. Owned replaced generations remain
+alive until closure. Construction is synchronous; cleanup can be asynchronous.

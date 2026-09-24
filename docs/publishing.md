@@ -65,3 +65,45 @@ git push origin factory_generator-v0.3.0
 
 Each tag must point to the same verified release commit. Never reuse or move a
 published tag; increment the package version and create a new tag instead.
+
+## Candidate acceptance without publication
+
+Prepare an isolated Python environment and run the hosted-artifact checks:
+
+```sh
+python3 -m venv /tmp/factory-verification
+/tmp/factory-verification/bin/pip install -r tool/requirements.txt
+/tmp/factory-verification/bin/python tool/verify_release.py --output build/acceptance/current
+```
+
+The verifier checks coordinated versions/changelogs/core constraints, then uses
+Pub's `publish --skip-validation --to-archive` to create the exact Pub file set.
+It validates the extracted contents with `pub publish --dry-run` separately,
+installs the archives via a read-only loopback package server, and runs public
+consumers with an independent cache and no overrides. Skipping validation during
+archive creation does not skip the subsequent mandatory dry-run. `--to-archive`
+is a hidden Pub option; its implementation is in
+[Pub's publishing command](https://github.com/dart-lang/pub/blob/master/lib/src/command/lish.dart).
+The server follows the [hosted repository protocol](https://github.com/dart-lang/pub/blob/master/doc/repository-spec-v2.md).
+It accepts no upload requests. This is not pub.dev publication.
+
+Use the same archives under the other SDKs (put that SDK first on PATH):
+
+```sh
+python tool/verify_release.py --archives build/acceptance/current/archives --runtime-only --lower-dependencies --output build/acceptance/runtime-minimum
+python tool/verify_release.py --archives build/acceptance/current/archives --generator-only --output build/acceptance/generator-minimum
+```
+
+The runtime job uses Flutter 3.19.0 / Dart 3.3.0 and installs no generator;
+`--lower-dependencies` fixes Provider to its declared lower bound 6.1.5+1.
+The generator job uses Dart 3.11.0 without Flutter. Current CI pins Flutter
+3.47.2 / Dart 3.13.2. Each output includes logs, resolved package versions,
+archive SHA-256 hashes, commit, SDK versions and expected failures. A dirty
+worktree run is diagnostic, not the final acceptance of a commit.
+
+The current run deliberately removes an interface member from an implementer,
+breaks immediate closure rejection in a disposable cache, and omits the core
+entrypoint from a served archive. Each must fail for the expected reason;
+restored consumers must pass. The checkout is never mutated by these probes.
+CI uploads the reports even on failure. Do not publish, tag or close the parent
+spec as part of candidate acceptance.

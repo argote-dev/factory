@@ -1,0 +1,16 @@
+{
+  "release": "https://github.com/argote-dev/factory/releases/tag/v0.3.0",
+  "tag": "v0.3.0",
+  "commit": "71fe8a4dd6a6d62cae4a072354c5852c89151ff2",
+  "files": {
+    "dart/.gitignore": "1ac8c6b4466db8f242ba0fb00c398a43ef181d74e1614fadee95da5302f09f53",
+    "dart/pubspec.yaml": "2835488cbfc4c44caf8b846e2a809422ff860df364bacabca36bb8f0885be247",
+    "dart/test/public_contract_test.dart": "8b632a0f5279135180b74eec978d010452806711b2d69f2db4025e73561ea38e",
+    "flutter/.gitignore": "7185087daf42be4732f9f363de21fc5b77a37ee307264e41349f5df2c2afc1be",
+    "flutter/lib/dependencies.dart": "59b9293d75b840ee8ddce8730f3022e165f68ed64b07a4b9da93b5a9cb021990",
+    "flutter/lib/registry.dart": "05377d1703b6524f221e4e7fec95e7efbd88c90b24f57dd310d83d02feb70845",
+    "flutter/lib/registry.factory.dart": "8fab3b8c397d2bd4df04912d01f9745e099903cbd6fb7e00bebd8d9624cbc1dd",
+    "flutter/pubspec.yaml": "25499637582a788b7c56a210eb1e6a7b91bc928080c5d6576d42c7ce9f3b133a",
+    "flutter/test/public_contract_test.dart": "17551f80a9f30d275a64580425940931abcbd4cff454a94e6ab1851a2d56d45a"
+  }
+}

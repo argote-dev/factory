@@ -151,21 +151,21 @@ packages:
       path: "../packages/factory_core"
       relative: true
     source: path
-    version: "0.3.0"
+    version: "1.0.0"
   factory_generator:
     dependency: "direct dev"
     description:
       path: "../packages/factory_generator"
       relative: true
     source: path
-    version: "0.3.0"
+    version: "1.0.0"
   factory_provider:
     dependency: "direct main"
     description:
       path: ".."
       relative: true
     source: path
-    version: "0.3.0"
+    version: "1.0.0"
   fake_async:
     dependency: transitive
     description:

@@ -1,70 +1,59 @@
 # Compatibility and validation
 
-This is a development release. Package constraints and tested environments are
-recorded separately from deployment-platform targets.
+Factory — Maneja tus dependencias sin barreras. This repository prepares an
+unpublished 1.0 candidate. Support claims are scoped to the checks below; a
+configured workflow, platform scaffold or successful dry-run is not a release.
 
-## SDKs
+## SDK and dependency matrix
 
-| Component | Declared minimum | Validation |
-| --- | --- | --- |
-| `factory_core` | Dart 3.3.0 | Unit tests and analysis pass on Dart 3.3.0 and 3.12.0. |
-| `factory_provider` Flutter adapter | Flutter 3.19.0 / Dart 3.3.0 | Widget tests and analysis pass on Flutter 3.19.0 and 3.44.0. |
-| `factory_generator` | Dart 3.11.0 | Builder tests and analysis pass on Dart 3.11.0 and 3.12.0. |
-| `example` | Dart 3.11.0 | Both composition flows and analysis pass on Flutter 3.44.0. |
+| Consumer | SDK | Packages / dependencies | Verification |
+| --- | --- | --- | --- |
+| Manual Dart runtime | Dart 3.3.0 | Candidate core; no Flutter or generator | Packaged core tests, analysis, current/historical consumers |
+| Provider runtime, including already generated modules | Flutter 3.19.0 / Dart 3.3.0 | Candidate core + adapter; Provider **6.1.5+1** fixed; no generator installed | Packaged runtime tests, analysis, manual/generated and historical consumers |
+| Optional Dart generation | Dart 3.11.0 | Coordinated candidate generator/core | Packaged builder tests, analysis, generated Dart consumer and regeneration |
+| Current Dart/Flutter composition and generation | Flutter 3.47.2 / Dart 3.13.2 | Coordinated candidate packages; exact dependency resolutions in evidence.json | All packaged tests, current and 0.3 consumers, existing output, regeneration and drift |
 
-The runtime minimum SDK check uses a clean runtime-only copy and independent
-dependency resolution. The optional generator does not increase the runtime's
-SDK minimum.
-Provider was resolved at 6.1.5+1. Generator dependencies use analyzer 10.2.0,
-source_gen 4.2.4 and build_runner 2.15.1; analyzer 14 requires a newer `meta`
-version than Flutter 3.44.0's SDK pin permits.
+The runtime minimums are retained throughout 1.x. Generator SDK increases follow
+the [advance-notice policy](compatibility-policy.md) and never change the runtime
+minimum. SDK minimums are distinct from dependency minimums: Provider 6.1.5+1 is
+tested explicitly; build tooling resolves within its declared bounds and the
+report records exact versions. We do not promise every historical combination of
+analyzer/build/source_gen or every combination of Factory minor releases.
 
-The CI workflow repeats package checks on Linux, macOS and Windows, separately
-checks the runtime minimum, and checks regenerated example output for drift.
-A committed workflow is not evidence that hosted CI has already run.
+Historical 0.3 generated output is tested on the candidate runtime before
+regeneration. Regeneration is supported with the coordinated candidate generator
+on Dart 3.11 and the fixed current SDK. A runtime-only application can retain
+existing generated output without installing the generator.
 
-## Platforms
+## Evidence and reproduction
 
-| Target | Evidence in this environment |
+[Candidate verification](publishing.md#candidate-acceptance-without-publication)
+explains the commands. `tool/verify_release.py` records commit, SDKs, command
+outputs, resolved dependencies and archive hashes. All SDK jobs consume the same
+three Pub archives, not independently modified checkouts. It checks actual
+hosted package resolution without local overrides. Expected failures verify
+interface, lifecycle and omitted-file detection, followed by passing restorations.
+
+The [Verify workflow](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
+uploads `current-evidence`, `runtime-minimum-evidence`,
+`generator-minimum-evidence` and `baseline-evidence`. Those artifacts are evidence
+only for the commit in a completed run. Local acceptance is recorded separately
+in the candidate report; the older 54-test validation record applied to an earlier
+implementation and is not evidence for 1.0.
+
+## Platform scope
+
+VM and widget tests exercise the Dart/Flutter behavior. Web/native compilation
+and device execution are separate checks, never inferred from widget tests.
+
+| Target | Candidate validation scope |
 | --- | --- |
-| Web | `flutter build web` succeeds on Flutter 3.44.0, including its Wasm dry run. |
-| macOS | VM/widget tests and `flutter build macos --debug` pass on Apple Silicon. Universal release build remains unverified; see below. |
-| Android, iOS, Linux, Windows | Example scaffolding exists; native builds and device behavior have not been validated locally. |
+| macOS arm64 | Local VM/widget tests and analysis on the minimum and current SDKs; native build/run status must be read from the candidate acceptance report |
+| Linux, Windows | CI has package/consumer tests; support requires a completed run for the candidate, not just the job definition |
+| Web | Example has a build job; an actual candidate build is recorded separately |
+| Android, iOS | Scaffolding exists; no claim of native build or device execution from this verification |
 
-The macOS universal release build encountered a toolchain failure: framework
-verification reports `lipo -verify_arch requires exactly one input file` for the
-multi-architecture framework. An initial debug attempt encountered a transient
-Swift Package Manager resolution failure; `xcodebuild -resolvePackageDependencies`
-resolved the local packages and the subsequent debug build succeeded. The example
-deployment target is macOS 12, matching the installed Xcode's supported range.
-A successful debug build does not establish universal release or device-flow
-validation.
-
-Flutter SDK versions were obtained from the
-[official SDK archive](https://docs.flutter.dev/install/archive).
-
-## Reproduction
-
-Run the commands in the root README. For runtime-only minimum checks, copy the
-root `pubspec.yaml`, `analysis_options.yaml`, `lib/`, `test/`, and
-`packages/factory_core/` into a clean temporary directory before resolving
-dependencies. This keeps the optional generator/example SDK constraints out of
-the check. Regenerate modules with `dart run build_runner build` in `example`;
-`watch` provides the same builder during development.
-
-The example has two launch entrypoints. Its widget tests exercise the same flow
-with both, including ChangeNotifier-driven rendering and cleanup after navigation.
-Business classes and presentation widgets do not import Factory.
-
-## Final verification record
-
-The final implementation passed 54 behavioral tests: 22 core, 15 Flutter adapter,
-14 generator and 3 example tests. Static analysis is clean in each package.
-Runtime tests were repeated on the exact declared minimum Dart 3.3.0 / Flutter
-3.19.0; generator tests passed on its Dart 3.11.0 minimum. Current development
-checks used Flutter 3.44.0 / Dart 3.12.0.
-
-Regenerating the example modules produces no tracked diff. The final code builds
-for web and for macOS debug. The [two-axis review](review.md) records findings,
-regressions and their verified corrections. Hosted CI and the remaining native
-platform builds have not been executed by this local validation.
+The example's shared widget flow validates both Factory and Provider-only
+composition, child substitution, parent isolation and visible closure. It does
+not establish native device behavior. SDK distributions come from the
+[official Flutter archive](https://docs.flutter.dev/install/archive).

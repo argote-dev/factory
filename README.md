@@ -1,4 +1,6 @@
-# Factory
+# Factory — Maneja tus dependencias sin barreras
+
+Inyección de dependencias para Flutter con Provider. Adopta gradualmente, prueba tu composición y conserva la libertad de retirarla.
 
 [CI verification](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
 
@@ -6,11 +8,11 @@ Dependency injection for Flutter apps that already use Provider. Declare how
 objects are built, install a module, and keep using `context.read`,
 `context.watch`, `context.select`, and `Consumer`.
 
-Factory is an initial implementation under development. The optional generator
+This repository prepares a verifiable Factory 1.0 candidate; it does not announce a published 1.0 release. The optional generator
 collects declarations; it does not annotate your business classes or infer their
 constructors.
 
-## Quick integration guide
+## Conectar — quick integration guide
 
 ### 1. Add the dependencies
 
@@ -21,7 +23,7 @@ an existing Flutter application's `pubspec.yaml`, then run `flutter pub get`:
 dependencies:
   flutter:
     sdk: flutter
-  factory_provider: ^0.3.0
+  factory_provider: ^1.0.0
   provider: ^6.1.5+1
 ```
 
@@ -102,7 +104,7 @@ module's exposed types. Keep using `context.read`, `context.watch`,
 `context.select`, and `Consumer` in your widgets. Move construction into Factory
 declarations and register cleanup callbacks for resources they own. To reuse an
 instance already owned by Provider, follow
-[existing dependencies and nested flows](#existing-dependencies-and-nested-flows).
+[existing dependencies and nested flows](#sustituir--existing-dependencies-and-nested-flows).
 
 See the [runnable example](example/README.md) for repositories, nested scopes,
 and equivalent Factory and Provider-only entrypoints.
@@ -152,9 +154,10 @@ The default is lazy creation and `Lifetime.scoped`: one value per owning scope.
 a value for every container resolution. Provider caches its exposed value, so
 reading it through a widget does not repeatedly resolve a unique declaration.
 Construction is synchronous; initialize asynchronous services outside Factory
-and supply their ready instances.
+and supply their ready instances. The [async startup recipe](docs/async-startup.md)
+executes successful startup, partial failure and awaited shutdown with explicit owners.
 
-## Existing dependencies and nested flows
+## Sustituir — existing dependencies and nested flows
 
 ```dart
 final session = Factory<Session>.external();
@@ -255,7 +258,7 @@ of concrete dependencies remains available for classes that must support removin
 Factory by changing composition alone. No field annotations or code generation
 are needed.
 
-## Cleanup and tests without widgets
+## Probar — cleanup and tests without widgets
 
 ```dart
 final container = FactoryContainer(
@@ -285,6 +288,29 @@ Unmounting starts cleanup without waiting. For an explicitly awaited close, use
 `FactoryScope.of(context).close()` before leaving a flow. Dispose callbacks should
 not resolve more dependencies or await the scope's own closing future.
 
+## Retirar — preserve widgets and business classes
+
+The example runs the same profile flow with two compositions:
+
+```sh
+cd example
+flutter run -t lib/main.dart
+flutter run -t lib/main_provider.dart
+flutter test test/example_flow_test.dart
+```
+
+Both start with Ada, open a child flow using Grace, load `Grace Hopper profile`,
+then return to Ada and record one closed flow. Existing Provider owns the root
+session and monitor; Factory borrows them. The child composition owns its local
+session. Replacing Factory with Provider changes composition only: the domain
+classes receive collaborators by constructor and the widgets keep normal
+Provider APIs. See [the two entrypoints](example/README.md).
+
+This guarantee excludes the opt-in `FactoryChangeNotifier` and retained
+`FactoryResolver`: removing Factory from those classes requires replacing their
+internal resolution with constructor-injected collaborators and, for the base
+class, extending `ChangeNotifier` directly. Choose that coupling explicitly.
+
 ## Optional annotations
 
 Flutter applications add only `factory_provider` at runtime and add `factory_generator`
@@ -294,7 +320,7 @@ Standalone Dart applications use `factory_core` instead.
 
 ```yaml
 dev_dependencies:
-  factory_generator: ^0.3.0
+  factory_generator: ^1.0.0
   build_runner: ^2.15.1
 ```
 
@@ -322,6 +348,7 @@ as well as the exposed subset. The manual equivalent remains available.
 
 - [Runnable integration example](example/README.md): incremental adoption,
   generated modules, nested scopes, and troubleshooting.
+- [1.x compatibility policy](docs/compatibility-policy.md): stability and SDK evolution.
 - [Public API guide](docs/api-guide.md): declarations, scopes, and lifecycle contracts.
 - [Memory profiling playbook](docs/memory-profiling.md): cleanup and repeated navigation.
 - [Compatibility and validation](docs/support.md): SDK requirements and platform evidence.

@@ -1,8 +1,7 @@
 # Compatibility and validation
 
-Factory — Maneja tus dependencias sin barreras. This repository prepares an
-unpublished 1.0 candidate. Support claims are scoped to the checks below; a
-configured workflow, platform scaffold or successful dry-run is not a release.
+Factory — Maneja tus dependencias sin barreras. Factory 1.0 support claims are scoped to the completed checks below.
+A platform scaffold or successful compilation does not establish device execution.
 
 ## SDK and dependency matrix
 
@@ -44,6 +43,17 @@ only for the commit in a completed run. Local acceptance is recorded separately
 in the [candidate report](acceptance/factory-1.0.md); the older 54-test validation record applied to an earlier
 implementation and is not evidence for 1.0.
 
+## Completed hosted verification
+
+[Verify run 36080342683](https://github.com/argote-dev/factory/actions/runs/36080342683)
+passed all six jobs for `ea16bb17298d42185d3047fecd800ac66e23f0c9`: Linux,
+macOS and Windows package/consumer checks, distributable artifacts, runtime
+minimum and generator minimum. The package jobs also compiled the web example,
+and the respective macOS and Windows jobs compiled native examples. This
+supplements the historical local candidate report; it does not establish
+browser or native device execution. Release tags must reference a commit whose
+own Verify run has completed successfully.
+
 ## Platform scope
 
 VM and widget tests exercise the Dart/Flutter behavior. Web/native compilation
@@ -51,9 +61,9 @@ and device execution are separate checks, never inferred from widget tests.
 
 | Target | Candidate validation scope |
 | --- | --- |
-| macOS arm64 | Local VM/widget tests and analysis on the minimum and current SDKs; native build/run status must be read from the candidate acceptance report |
-| Linux, Windows | CI has package/consumer tests; support requires a completed run for the candidate, not just the job definition |
-| Web | Example has a build job; an actual candidate build is recorded separately |
+| macOS arm64 | Local VM/widget tests and analysis on minimum/current SDKs; hosted macOS compilation passed; native execution not verified |
+| Linux, Windows | Hosted package/consumer tests passed on both; Windows example compilation passed; Linux native build and device execution not verified |
+| Web | Example compilation passed locally and in hosted CI; browser execution not verified |
 | Android, iOS | Scaffolding exists; no claim of native build or device execution from this verification |
 
 The example's shared widget flow validates both Factory and Provider-only

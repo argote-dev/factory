@@ -4,6 +4,19 @@ Candidate: `5f9cac4087a1ef4093dbd54da6a25890c01b1595`. This is an
 unpublished candidate, not a pub.dev release. The acceptance was executed in a
 clean detached checkout, separate from pre-existing local edits.
 
+## Release preparation update
+
+The report below preserves the original local acceptance of `5f9cac4`.
+Subsequent example and documentation changes were integrated through PRs #43
+and #44. [Hosted Verify run 36080342683](https://github.com/argote-dev/factory/actions/runs/36080342683)
+passed all six jobs on `ea16bb17298d42185d3047fecd800ac66e23f0c9`, including
+packaged current/historical consumers, SDK minimums, three operating systems,
+web compilation and native macOS/Windows compilation. The historical archive
+hashes below identify the original candidate, not the final release archives.
+The 1.0.0 release notes link the final commit and its own completed Verify run;
+that run supplies the release artifact hashes and logs. Device/browser execution
+and Android/iOS builds remain outside the verified scope.
+
 ## Decision
 
 **Ready as a locally verified 1.0 candidate within the support matrix below.**

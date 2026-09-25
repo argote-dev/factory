@@ -12,7 +12,7 @@ Dependency injection for Flutter apps that already use Provider. Declare how
 objects are built, install a module, and keep using `context.read`,
 `context.watch`, `context.select`, and `Consumer`.
 
-This repository prepares a verifiable Factory 1.0 candidate; it does not announce a published 1.0 release. The optional generator
+Factory 1.0 defines a stable public API with verified compatibility from 0.3. The optional generator
 collects declarations; it does not annotate your business classes or infer their
 constructors.
 

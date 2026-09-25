@@ -1,6 +1,6 @@
 ## 1.0.0
 
-- Prepare an unpublished 1.0 candidate with the existing 0.3 public API.
+- Stabilize the existing 0.3 public API as Factory 1.0.0.
 - Define the 1.x API, behavior, deprecation and runtime SDK stability policy.
 - Verify public consumers, historical generated output and isolated Pub artifacts.
 - Keep synchronous construction, asynchronous cleanup and the optional generator.

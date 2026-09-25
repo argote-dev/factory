@@ -2,7 +2,7 @@
 
 Dependency injection for Flutter with Provider. Adopt it gradually, test your composition, and keep the freedom to remove it.
 
-[CI verification](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
+[![CI verification](https://github.com/argote-dev/factory/actions/workflows/verify.yml/badge.svg)](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
 
 Dependency injection for Flutter apps that already use Provider. Declare how
 objects are built, install a module, and keep using `context.read`,

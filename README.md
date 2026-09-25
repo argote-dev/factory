@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/argote-dev/factory/main/docs/assets/factory-logo.png" alt="Factory logo" width="180">
+</p>
+
 # Factory — Manage your dependencies without barriers
 
 Dependency injection for Flutter with Provider. Adopt it gradually, test your composition, and keep the freedom to remove it.

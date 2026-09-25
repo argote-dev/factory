@@ -1,6 +1,6 @@
-# Factory — Maneja tus dependencias sin barreras
+# Factory — Manage your dependencies without barriers
 
-Inyección de dependencias para Flutter con Provider. Adopta gradualmente, prueba tu composición y conserva la libertad de retirarla.
+Dependency injection for Flutter with Provider. Adopt it gradually, test your composition, and keep the freedom to remove it.
 
 [CI verification](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
 
@@ -12,7 +12,7 @@ This repository prepares a verifiable Factory 1.0 candidate; it does not announc
 collects declarations; it does not annotate your business classes or infer their
 constructors.
 
-## Conectar — manual usage
+## Connect — manual usage
 
 ### 1. Add the dependencies
 
@@ -104,7 +104,7 @@ module's exposed types. Keep using `context.read`, `context.watch`,
 `context.select`, and `Consumer` in your widgets. Move construction into Factory
 declarations and register cleanup callbacks for resources they own. To reuse an
 instance already owned by Provider, follow
-[existing dependencies and nested flows](#sustituir--existing-dependencies-and-nested-flows).
+[existing dependencies and nested flows](#replace--existing-dependencies-and-nested-flows).
 
 See the [runnable example](https://github.com/argote-dev/factory/blob/main/example/README.md) for repositories, nested scopes,
 and separate manual, annotated, and Provider-only entrypoints.
@@ -157,7 +157,7 @@ Construction is synchronous; initialize asynchronous services outside Factory
 and supply their ready instances. The [async startup recipe](https://github.com/argote-dev/factory/blob/main/docs/async-startup.md)
 executes successful startup, partial failure and awaited shutdown with explicit owners.
 
-## Sustituir — existing dependencies and nested flows
+## Replace — existing dependencies and nested flows
 
 ```dart
 final session = Factory<Session>.external();
@@ -258,7 +258,7 @@ of concrete dependencies remains available for classes that must support removin
 Factory by changing composition alone. No field annotations or code generation
 are needed.
 
-## Probar — cleanup and tests without widgets
+## Test — cleanup and tests without widgets
 
 ```dart
 final container = FactoryContainer(
@@ -288,7 +288,7 @@ Unmounting starts cleanup without waiting. For an explicitly awaited close, use
 `FactoryScope.of(context).close()` before leaving a flow. Dispose callbacks should
 not resolve more dependencies or await the scope's own closing future.
 
-## Retirar — preserve widgets and business classes
+## Remove — preserve widgets and business classes
 
 The example runs the same profile flow with manual Factory, annotated Factory,
 and Provider-only compositions:

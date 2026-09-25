@@ -12,7 +12,7 @@ This repository prepares a verifiable Factory 1.0 candidate; it does not announc
 collects declarations; it does not annotate your business classes or infer their
 constructors.
 
-## Conectar — quick integration guide
+## Conectar — manual usage
 
 ### 1. Add the dependencies
 
@@ -29,7 +29,7 @@ dependencies:
 
 Keep `provider` as a direct dependency when your widgets import it. Manual setup
 needs no annotations or code generation. For standalone Dart, use
-[`factory_core`](packages/factory_core/README.md) with `FactoryContainer` instead.
+[`factory_core`](https://github.com/argote-dev/factory/blob/main/packages/factory_core/README.md) with `FactoryContainer` instead.
 
 ### 2. Declare, expose, and install a dependency
 
@@ -106,8 +106,8 @@ declarations and register cleanup callbacks for resources they own. To reuse an
 instance already owned by Provider, follow
 [existing dependencies and nested flows](#sustituir--existing-dependencies-and-nested-flows).
 
-See the [runnable example](example/README.md) for repositories, nested scopes,
-and equivalent Factory and Provider-only entrypoints.
+See the [runnable example](https://github.com/argote-dev/factory/blob/main/example/README.md) for repositories, nested scopes,
+and separate manual, annotated, and Provider-only entrypoints.
 
 ## How Factory fits together
 
@@ -154,7 +154,7 @@ The default is lazy creation and `Lifetime.scoped`: one value per owning scope.
 a value for every container resolution. Provider caches its exposed value, so
 reading it through a widget does not repeatedly resolve a unique declaration.
 Construction is synchronous; initialize asynchronous services outside Factory
-and supply their ready instances. The [async startup recipe](docs/async-startup.md)
+and supply their ready instances. The [async startup recipe](https://github.com/argote-dev/factory/blob/main/docs/async-startup.md)
 executes successful startup, partial failure and awaited shutdown with explicit owners.
 
 ## Sustituir — existing dependencies and nested flows
@@ -290,33 +290,35 @@ not resolve more dependencies or await the scope's own closing future.
 
 ## Retirar — preserve widgets and business classes
 
-The example runs the same profile flow with two compositions:
+The example runs the same profile flow with manual Factory, annotated Factory,
+and Provider-only compositions:
 
 ```sh
 cd example
 flutter run -t lib/main.dart
+dart run build_runner build
+flutter run -t lib/main_annotations.dart
 flutter run -t lib/main_provider.dart
 flutter test test/example_flow_test.dart
 ```
 
-Both start with Ada, open a child flow using Grace, load `Grace Hopper profile`,
+All three start with Ada, open a child flow using Grace, load `Grace Hopper profile`,
 then return to Ada and record one closed flow. Existing Provider owns the root
 session and monitor; Factory borrows them. The child composition owns its local
 session. Replacing Factory with Provider changes composition only: the domain
 classes receive collaborators by constructor and the widgets keep normal
-Provider APIs. See [the two entrypoints](example/README.md).
+Provider APIs. See [the example entrypoints](https://github.com/argote-dev/factory/blob/main/example/README.md).
 
 This guarantee excludes the opt-in `FactoryChangeNotifier` and retained
 `FactoryResolver`: removing Factory from those classes requires replacing their
 internal resolution with constructor-injected collaborators and, for the base
 class, extending `ChangeNotifier` directly. Choose that coupling explicitly.
 
-## Optional annotations
+## With annotations (optional)
 
-Flutter applications add only `factory_provider` at runtime and add `factory_generator`
-plus `build_runner` as development dependencies. The generator requires Dart
-3.11+; the manual runtime integration above keeps its Dart 3.3+ minimum.
-Standalone Dart applications use `factory_core` instead.
+Annotations replace the manual module lists. Keep the same factories,
+`FactoryScope`, and Provider widgets. Add these development dependencies to the
+manual setup above (generation requires Dart 3.11+):
 
 ```yaml
 dev_dependencies:
@@ -324,15 +326,20 @@ dev_dependencies:
   build_runner: ^2.15.1
 ```
 
+Declare an annotated factory in `lib/composition/factories.dart`:
+
 ```dart
-// lib/composition/factories.dart
-@Register(module: 'app')
-final client = Factory<ApiClient>((_) => ApiClient());
+import 'package:factory_provider/factory_provider.dart';
 
 @Register(module: 'app', expose: true)
-final repository = Factory<UserRepository>((ref) => UserRepository(ref.read(client)));
+final greeting = Factory<String>((_) => 'Hello, Ada!');
+```
 
-// lib/composition/registry.dart
+Create `lib/composition/registry.dart`:
+
+```dart
+import 'package:factory_provider/factory_provider.dart';
+
 @FactoryRegistry(
   include: ['lib/composition/**.dart'],
   runtime: FactoryRuntime.flutter,
@@ -340,18 +347,39 @@ final repository = Factory<UserRepository>((ref) => UserRepository(ref.read(clie
 void configureFactories() {}
 ```
 
-Run `dart run build_runner watch`. Import `composition/registry.factory.dart`
-and install its `appModule`. Generated modules include internal/eager declarations
-as well as the exposed subset. The manual equivalent remains available.
+Run `dart run build_runner build`, then import
+`composition/registry.factory.dart` to install its generated `appModule`:
+
+```dart
+FactoryScope(
+  modules: [appModule],
+  child: MaterialApp(
+    home: Builder(
+      builder: (context) => Scaffold(
+        body: Center(child: Text(context.watch<String>())),
+      ),
+    ),
+  ),
+);
+```
+
+Only `expose: true` values are available through Provider. The generated module
+also includes internal declarations. Use `dart run build_runner watch` to
+regenerate while editing. See the [generator guide](https://pub.dev/packages/factory_generator)
+for standalone Dart and registration rules.
+
+The [runnable example](https://github.com/argote-dev/factory/blob/main/example/README.md) keeps manual modules in
+`composition/modules.dart` and registrations in `composition/annotations.dart`.
+Run `lib/main.dart` for manual usage or `lib/main_annotations.dart` for annotations.
 
 ## Further reading
 
-- [Runnable integration example](example/README.md): incremental adoption,
-  generated modules, nested scopes, and troubleshooting.
-- [1.x compatibility policy](docs/compatibility-policy.md): stability and SDK evolution.
-- [Public API guide](docs/api-guide.md): declarations, scopes, and lifecycle contracts.
-- [Memory profiling playbook](docs/memory-profiling.md): cleanup and repeated navigation.
-- [Compatibility and validation](docs/support.md): SDK requirements and platform evidence.
+- [Runnable integration example](https://github.com/argote-dev/factory/blob/main/example/README.md): incremental adoption,
+  manual and generated modules, nested scopes, and validation.
+- [1.x compatibility policy](https://github.com/argote-dev/factory/blob/main/docs/compatibility-policy.md): stability and SDK evolution.
+- [Public API guide](https://github.com/argote-dev/factory/blob/main/docs/api-guide.md): declarations, scopes, and lifecycle contracts.
+- [Memory profiling playbook](https://github.com/argote-dev/factory/blob/main/docs/memory-profiling.md): cleanup and repeated navigation.
+- [Compatibility and validation](https://github.com/argote-dev/factory/blob/main/docs/support.md): SDK requirements and platform evidence.
 
 ## Repository development
 
@@ -369,12 +397,12 @@ flutter analyze lib test
 ./tool/verify_consumers.sh
 ```
 
-See [the runnable example](example/README.md) for both Factory and Provider-only
+See [the runnable example](https://github.com/argote-dev/factory/blob/main/example/README.md) for manual, annotated, and Provider-only
 entrypoints using the same business classes and widgets, and
-[compatibility and validation](docs/support.md) for tested SDKs and platforms.
+[compatibility and validation](https://github.com/argote-dev/factory/blob/main/docs/support.md) for tested SDKs and platforms.
 
-Contributions are welcome. Read [the contribution guide](CONTRIBUTING.md) before
+Contributions are welcome. Read [the contribution guide](https://github.com/argote-dev/factory/blob/main/CONTRIBUTING.md) before
 opening a pull request. Please report vulnerabilities according to the
-[security policy](SECURITY.md), not through a public issue.
+[security policy](https://github.com/argote-dev/factory/blob/main/SECURITY.md), not through a public issue.
 
-Factory is available under the [MIT License](LICENSE).
+Factory is available under the [MIT License](https://github.com/argote-dev/factory/blob/main/LICENSE).

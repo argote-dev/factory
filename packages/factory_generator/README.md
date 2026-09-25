@@ -1,24 +1,63 @@
 # factory_generator
 
-Optional `build_runner` support for assembling `Factory` declarations into
-`FactoryModule` values. It never constructs dependencies: the generated file
-only imports existing declarations and groups their references.
+Optional code generation for Factory modules. Annotate factory declarations and
+let `build_runner` assemble the module lists. Constructors, lifetimes, and cleanup
+remain in your declarations. Requires Dart 3.11+.
 
-For standalone Dart, add the core runtime and generator packages:
+## Manual usage: no generator needed
+
+Use `factory_core` for Dart or `factory_provider` for Flutter. You can always
+write modules directly:
+
+```dart
+final greeting = Factory<String>((_) => 'Hello, Ada!');
+final appModule = FactoryModule(
+  factories: [greeting],
+  expose: [greeting],
+);
+```
+
+Choose annotations below when you want to generate those lists.
+
+## With annotations
+
+### 1. Add dependencies
+
+For a standalone Dart app:
 
 ```yaml
 dependencies:
   factory_core: ^1.0.0
 
 dev_dependencies:
-  build_runner: ^2.15.1
   factory_generator: ^1.0.0
+  build_runner: ^2.15.1
 ```
 
-Create one composition entrypoint and keep declarations in `lib/`:
+For Flutter, replace `factory_core` with `factory_provider`. Use its import in
+both files below and select `FactoryRuntime.flutter` in the registry.
+
+### 2. Register declarations
+
+Create `lib/composition/factories.dart`:
 
 ```dart
-// lib/composition/registry.dart
+import 'package:factory_core/factory_core.dart';
+
+@Register(module: 'app', expose: true)
+final greeting = Factory<String>((_) => 'Hello, Ada!');
+```
+
+`module: 'app'` produces `appModule`. `expose: true` makes the value available
+through Provider in Flutter; it is optional for Dart container reads. Annotate
+public top-level `final Factory<T>` values, including aliases of existing
+factories. Business classes need no annotations.
+
+### 3. Define the registry
+
+Create `lib/composition/registry.dart`:
+
+```dart
 import 'package:factory_core/factory_core.dart';
 
 @FactoryRegistry(
@@ -28,37 +67,40 @@ import 'package:factory_core/factory_core.dart';
 void configureFactories() {}
 ```
 
+### 4. Generate and use the module
+
+```sh
+dart run build_runner build
+```
+
+This creates `lib/composition/registry.factory.dart`. Use it from `bin/main.dart`:
+
 ```dart
-// lib/composition/services.dart
 import 'package:factory_core/factory_core.dart';
+import '../lib/composition/factories.dart';
+import '../lib/composition/registry.factory.dart';
 
-@Register(module: 'app')
-final apiClient = Factory<ApiClient>((ref) => ApiClient());
-
-@Register(module: 'app', expose: true)
-final repository = Factory<Repository>(
-  (ref) => Repository(ref.read(apiClient)),
-);
+Future<void> main() async {
+  final container = FactoryContainer(modules: [appModule]);
+  try {
+    print(container.read(greeting));
+  } finally {
+    await container.close();
+  }
+}
 ```
 
-Run `dart run build_runner watch`. This writes
-`lib/composition/registry.factory.dart`, which exposes `appModule`:
+In Flutter, install the generated module with
+`FactoryScope(modules: [appModule], child: const MyApp())`, then consume exposed
+values with Provider. Use `dart run build_runner watch` to regenerate while editing.
 
-```dart
-import 'registry.factory.dart';
+## Rules
 
-final modules = [appModule];
-```
+- `include` accepts globs inside the current package's `lib/` directory.
+- Generated `.factory.dart` files are excluded from scanning.
+- Each registry library has one annotated top-level function and an explicit runtime.
+- A module cannot expose two declarations with the same resolved type.
+- Generated modules include internal declarations as well as the exposed subset.
 
-`include` accepts current-package `lib/` globs only. The generator ignores
-existing `.factory.dart` files so generated output never becomes an input.
-Each library may contain one `@FactoryRegistry` top-level function. `@Register`
-is valid only on public top-level `final Factory<T>` declarations. A module
-cannot expose two declarations with the same resolved `T` type.
-
-For Flutter, depend on `factory_provider` instead of `factory_core`, import
-`package:factory_provider/factory_provider.dart`, and select
-`FactoryRuntime.flutter`. The generated module then imports the public Flutter
-facade, avoiding a direct transitive core dependency. Generation is optional for
-both targets, and each registry library must explicitly select exactly one
-target.
+See the [runnable Flutter example](https://github.com/argote-dev/factory/tree/main/example)
+for separate manual and annotated entrypoints using the same profile flow.

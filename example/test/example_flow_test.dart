@@ -1,11 +1,26 @@
-import 'package:factory_example/main.dart' as factory_app;
+import 'package:factory_example/composition/modules.dart' as manual;
+import 'package:factory_example/composition/registry.factory.dart' as generated;
+import 'package:factory_example/composition/factory_example_app.dart';
 import 'package:factory_example/main_provider.dart' as provider_app;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   for (final example in <({String name, Widget app})>[
-    (name: 'Factory composition', app: const factory_app.FactoryExampleApp()),
+    (
+      name: 'Manual Factory composition',
+      app: FactoryExampleApp(
+        appModule: manual.appModule,
+        profileModule: manual.profileModule,
+      ),
+    ),
+    (
+      name: 'Annotated Factory composition',
+      app: FactoryExampleApp(
+        appModule: generated.appModule,
+        profileModule: generated.profileModule,
+      ),
+    ),
     (
       name: 'Provider-only composition',
       app: const provider_app.ProviderExampleApp(),

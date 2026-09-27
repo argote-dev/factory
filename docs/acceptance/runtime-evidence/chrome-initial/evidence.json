@@ -1,0 +1,81 @@
+{
+  "started_utc": "2026-09-27T03:51:46.328786+00:00",
+  "device": "chrome",
+  "mode": "debug",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "commit.log"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "status.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "HEAD",
+        "--",
+        "example",
+        "lib",
+        "packages",
+        "tool/verify_example_runtime.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "diff.log"
+    },
+    {
+      "argv": [
+        "flutter",
+        "--version",
+        "--machine"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "sdk.log"
+    },
+    {
+      "argv": [
+        "flutter",
+        "devices",
+        "--machine"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "devices.log"
+    },
+    {
+      "argv": [
+        "flutter",
+        "drive",
+        "--debug",
+        "--no-pub",
+        "--timeout=180",
+        "--driver=test_driver/integration_test.dart",
+        "--target=integration_test/profile_flow_test.dart",
+        "-d",
+        "chrome",
+        "--no-headless"
+      ],
+      "cwd": "example",
+      "exit_code": 1,
+      "log": "run.log"
+    }
+  ],
+  "result": "failed",
+  "finished_utc": "2026-09-27T03:52:03.186275+00:00"
+}

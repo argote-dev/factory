@@ -1,0 +1,106 @@
+{
+  "started_utc": "2026-09-27T03:57:31.849272+00:00",
+  "device": "emulator-5554",
+  "mode": "debug",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "commit.log"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "status.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "HEAD",
+        "--",
+        "example",
+        "lib",
+        "packages",
+        "tool/verify_example_runtime.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "diff.log"
+    },
+    {
+      "argv": [
+        "flutter",
+        "--version",
+        "--machine"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "sdk.log"
+    },
+    {
+      "argv": [
+        "flutter",
+        "devices",
+        "--machine"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "devices.log"
+    },
+    {
+      "argv": [
+        "flutter",
+        "drive",
+        "--debug",
+        "--no-pub",
+        "--timeout=180",
+        "--driver=test_driver/integration_test.dart",
+        "--target=integration_test/profile_flow_test.dart",
+        "-d",
+        "emulator-5554"
+      ],
+      "cwd": "example",
+      "exit_code": 0,
+      "log": "run.log"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "status-after.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "HEAD",
+        "--",
+        "example",
+        "lib",
+        "packages",
+        "tool/verify_example_runtime.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "diff-after.log"
+    }
+  ],
+  "flows_verified": true,
+  "result": "passed",
+  "finished_utc": "2026-09-27T03:57:57.240726+00:00"
+}

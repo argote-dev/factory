@@ -67,10 +67,15 @@ and device execution are separate checks, never inferred from widget tests.
 | --- | --- |
 | macOS arm64 | Local VM/widget tests and analysis on minimum/current SDKs; hosted macOS compilation passed; native execution not verified |
 | Linux, Windows | Hosted package/consumer tests passed on both; Windows example compilation passed; Linux native build and device execution not verified |
-| Web | Example compilation passed locally and in hosted CI; browser execution not verified |
-| Android, iOS | Scaffolding exists; no claim of native build or device execution from this verification |
+| Web | Compilation plus local Chrome 154 debug execution of all three example compositions; other browsers and release execution pending |
+| Android | Local debug execution on Android 17 / API 37 arm64 emulator; physical-device and release execution pending |
+| iOS | Local debug execution on iPhone 17 Pro / iOS 26.5 simulator; physical-device and release execution pending |
 
-The example's shared widget flow validates both Factory and Provider-only
-composition, child substitution, parent isolation and visible closure. It does
-not establish native device behavior. SDK distributions come from the
+The [runtime execution report](acceptance/example-runtime.md) records the exact
+commit, SDK, commands and logs for Chrome, Android and iOS separately. It runs the
+shared manual, annotated and Provider-only flow twice per composition, checking
+child substitution, one controller disposal per closure and preservation of
+borrowed parent values. These local results supplement compilation and widget
+tests; they do not establish physical-device coverage. See the
+[reproduction walkthrough](example-runtime.md). SDK distributions come from the
 [official Flutter archive](https://docs.flutter.dev/install/archive).

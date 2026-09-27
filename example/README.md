@@ -103,5 +103,10 @@ flutter test
 The tests check the user flow in all three variants and compare manual and
 generated module resolution, exposure, and cleanup.
 
+For actual Chrome, Android and iOS execution, follow the
+[runtime verification walkthrough](../docs/example-runtime.md). It reuses the
+same flow with `integration_test` and records per-target evidence. Completed
+runs and their limits are listed in the [support matrix](../docs/support.md).
+
 For memory profiling, use the separate `lib/memory_profile.dart` entrypoint and
 follow the [profiling playbook](../docs/memory-profiling.md).

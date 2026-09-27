@@ -10,7 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-void profileFlowTests() {
+void profileFlowTests({void Function(String)? onVerified}) {
   for (final example in <({String name, Widget app})>[
     (
       name: 'Manual Factory composition',
@@ -80,6 +80,7 @@ void profileFlowTests() {
       }
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
+      onVerified?.call(example.name);
     });
   }
 }

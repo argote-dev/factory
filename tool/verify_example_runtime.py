@@ -10,7 +10,7 @@ import subprocess
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--device", required=True, help="Exact flutter devices ID")
+    parser.add_argument("--device", required=True, help="Exact flutter devices ID, or chrome")
     parser.add_argument("--output", required=True, type=Path, help="New evidence directory")
     args = parser.parse_args()
     root = Path(__file__).resolve().parent.parent
@@ -45,13 +45,17 @@ def main():
                 raise SystemExit(f"Could not capture {name}; see {output}")
         command = ["flutter", "drive", "--debug", "--no-pub", "--timeout=180",
                    "--driver=test_driver/integration_test.dart",
-                   "--target=integration_test/profile_flow_test.dart", "-d", args.device]
+                   "--target=integration_test/profile_flow_test.dart", "-d",
+                   "web-server" if args.device == "chrome" else args.device]
         if args.device == "chrome":
-            command.append("--no-headless")
+            command.extend(["--browser-name=chrome", "--no-headless"])
         code = run("run", command, root / "example")
         evidence["result"] = "passed" if code == 0 else "failed"
         raise SystemExit(code)
     finally:
+        run("status-after", ["git", "status", "--porcelain"])
+        run("diff-after", ["git", "diff", "HEAD", "--", "example", "lib", "packages",
+                           "tool/verify_example_runtime.py"])
         evidence["finished_utc"] = datetime.now(timezone.utc).isoformat()
         (output / "evidence.json").write_text(json.dumps(evidence, indent=2) + "\n")
         print(f"Evidence: {output}", flush=True)

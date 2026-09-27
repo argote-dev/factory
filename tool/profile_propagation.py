@@ -50,7 +50,9 @@ def capture(output, run):
                 if process.poll() is not None or time.monotonic() > deadline:
                     raise RuntimeError(f"Profile launch failed; inspect {directory}")
                 time.sleep(.5)
-            uri = uri_file.read_text().strip()
+            address = urllib.parse.urlsplit(uri_file.read_text().strip())
+            uri = urllib.parse.urlunsplit((
+                "http", address.netloc, address.path.removesuffix("ws"), "", ""))
             vm = rpc(uri, "getVM")
             isolate = next(item["id"] for item in vm["isolates"]
                            if item["name"] == "main")
@@ -63,7 +65,7 @@ def capture(output, run):
             # Reverse AB order in run 2 to expose (not eliminate) order effects.
             for trace in ([False, True] if run != 2 else [True, False]):
                 rpc(uri, "setVMTimelineFlags",
-                    recordedStreams=json.dumps(["Dart"] if trace else []))
+                    recordedStreams="[Dart]" if trace else "[]")
                 for size in (10, 100, 1000):
                     rpc(uri, "clearVMTimeline")
                     rpc(uri, "clearCpuSamples", isolateId=isolate)
@@ -112,6 +114,8 @@ def main():
         "os": command("sw_vers"),
         "hardware": command("sysctl", "-n", "machdep.cpu.brand_string"),
         "memoryBytes": command("sysctl", "-n", "hw.memsize"),
+        "power": command("pmset", "-g", "batt"),
+        "powerSettings": command("pmset", "-g", "custom"),
         "startedUtc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
     }
     save(output / "environment.json", metadata)

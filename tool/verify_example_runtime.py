@@ -8,6 +8,22 @@ from pathlib import Path
 import subprocess
 
 
+def verified_flows(log):
+    """An interrupted Flutter process can exit zero without running any tests."""
+    expected = {"Manual Factory composition", "Annotated Factory composition",
+                "Provider-only composition"}
+    for line in log.splitlines():
+        if line.startswith("Verified profile flows: "):
+            try:
+                data = json.loads(line.removeprefix("Verified profile flows: "))
+                return (isinstance(data, dict)
+                        and data.get("cyclesPerComposition") == 2
+                        and sorted(data.get("verifiedCompositions", [])) == sorted(expected))
+            except (ValueError, TypeError):
+                return False
+    return False
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--device", required=True, help="Exact flutter devices ID, or chrome")
@@ -50,6 +66,9 @@ def main():
         if args.device == "chrome":
             command.extend(["--browser-name=chrome", "--no-headless"])
         code = run("run", command, root / "example")
+        evidence["flows_verified"] = verified_flows((output / "run.log").read_text())
+        if code == 0 and not evidence["flows_verified"]:
+            code = 1
         evidence["result"] = "passed" if code == 0 else "failed"
         raise SystemExit(code)
     finally:

@@ -1,5 +1,9 @@
 # Reproducible memory profiling
 
+For propagation wall-time percentiles and CPU/timeline evidence, use the
+[latency companion](propagation-profiling.md). Memory and latency baselines
+answer different questions.
+
 Use this playbook to distinguish contractual retention from a regression. A
 frequent GC or one high sample is not evidence of a leak: require sustained
 growth in three comparable runs and inspect the retaining path.

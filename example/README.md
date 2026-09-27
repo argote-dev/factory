@@ -92,6 +92,10 @@ flutter run -t lib/main_provider.dart
 Provider. Compare the compositions to see how to adopt or remove Factory without
 changing the domain classes or widgets.
 
+To evaluate the same transition in an existing app, follow the
+[adoption and removal pilot protocol](../docs/adoption-pilots.md). Running these
+entrypoints is a rehearsal, not one of the two real-app pilots.
+
 ## Verify
 
 ```sh

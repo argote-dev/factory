@@ -318,6 +318,11 @@ This guarantee excludes the opt-in `FactoryChangeNotifier` and retained
 internal resolution with constructor-injected collaborators and, for the base
 class, extending `ChangeNotifier` directly. Choose that coupling explicitly.
 
+For a bounded trial in an existing Provider app, use the
+[adoption and removal pilot protocol](docs/adoption-pilots.md). It records
+integration effort, cleanup ownership, and removal evidence. The repository
+example verifies contracts; it does not establish adoption effort in real apps.
+
 ## With annotations (optional)
 
 Annotations replace the manual module lists. Keep the same factories,

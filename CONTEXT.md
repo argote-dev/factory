@@ -45,8 +45,9 @@ Dependencia para la que cada resolución de Factory produce una instancia nueva.
 _Evitar_: Nueva instancia por cada lectura de Provider.
 
 **Dependencia reutilizada por ámbito**:
-Dependencia cuya instancia se conserva y reutiliza dentro de su ámbito propietario;
-el nombre público de esta política sigue pendiente.
+`Lifetime.scoped` is the default lifetime: the instance is retained and reused
+within its owning scope. A child inherits that instance unless the declaration
+is installed locally or overridden in the child.
 _Evitar_: Singleton global, shared débil.
 
 **Módulo de Factory**:

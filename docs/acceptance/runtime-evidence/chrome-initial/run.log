@@ -1,0 +1,11 @@
+Launching integration_test/profile_flow_test.dart on Chrome in debug mode...
+Waiting for connection from debug service on Chrome...          
+org-dartlang-app:///profile_flow_test.dart:3:8: Error: Error when reading 'org-dartlang-app:///test/support/profile_flow.dart': File not found
+import '../test/support/profile_flow.dart';
+       ^
+org-dartlang-app:///profile_flow_test.dart:7:3: Error: Method not found: 'profileFlowTests'.
+  profileFlowTests();
+  ^^^^^^^^^^^^^^^^
+Waiting for connection from debug service on Chrome...              9.1s
+Failed to compile application.
+Application exited before the test started. Check web driver logs for possible application-side errors.

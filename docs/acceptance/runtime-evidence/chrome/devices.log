@@ -1,0 +1,66 @@
+[
+  {
+    "name": "sdk gphone16k arm64",
+    "id": "emulator-5554",
+    "isSupported": true,
+    "targetPlatform": "android-arm64",
+    "emulator": true,
+    "sdk": "Android 17 (API 37)",
+    "capabilities": {
+      "hotReload": true,
+      "hotRestart": true,
+      "screenshot": true,
+      "flutterExit": true,
+      "hardwareRendering": true,
+      "startPaused": true
+    }
+  },
+  {
+    "name": "iPhone 17 Pro",
+    "id": "6677DC35-96FA-4F74-A9B5-B87C7F1C63AD",
+    "isSupported": true,
+    "targetPlatform": "ios",
+    "emulator": true,
+    "sdk": "com.apple.CoreSimulator.SimRuntime.iOS-26-5",
+    "capabilities": {
+      "hotReload": true,
+      "hotRestart": true,
+      "screenshot": true,
+      "flutterExit": true,
+      "hardwareRendering": false,
+      "startPaused": true
+    }
+  },
+  {
+    "name": "macOS",
+    "id": "macos",
+    "isSupported": true,
+    "targetPlatform": "darwin",
+    "emulator": false,
+    "sdk": "macOS 27.0 26A428 darwin-arm64",
+    "capabilities": {
+      "hotReload": true,
+      "hotRestart": true,
+      "screenshot": false,
+      "flutterExit": true,
+      "hardwareRendering": false,
+      "startPaused": true
+    }
+  },
+  {
+    "name": "Chrome",
+    "id": "chrome",
+    "isSupported": true,
+    "targetPlatform": "web-javascript",
+    "emulator": false,
+    "sdk": "Google Chrome 154.0.8037.57",
+    "capabilities": {
+      "hotReload": true,
+      "hotRestart": true,
+      "screenshot": false,
+      "flutterExit": false,
+      "hardwareRendering": false,
+      "startPaused": true
+    }
+  }
+]

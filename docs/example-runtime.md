@@ -39,8 +39,9 @@ The evidence directory retains commit, working-tree status/diffs before and afte
 execution, SDK, device inventory, exact command, timestamps, exit code and output.
 Use a committed checkout; untracked source is not captured by Git diffs. Review
 the logs before sharing them. Preserve failures in separate directories and mark
-unavailable platforms pending. A passing exit code and all three named composition
-tests in `run.log` are required. The fourth reported test is framework teardown.
+unavailable platforms pending. A passing exit code and the structured report of
+all three completed compositions in `run.log` are required. The runner rejects
+zero-exit interruptions without that report. The fourth reported test is framework teardown.
 This workflow is optional, not a mandatory CI gate.
 
 ## Observable contract

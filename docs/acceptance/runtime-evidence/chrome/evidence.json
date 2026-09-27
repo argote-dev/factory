@@ -1,0 +1,108 @@
+{
+  "started_utc": "2026-09-27T03:57:01.058493+00:00",
+  "device": "chrome",
+  "mode": "debug",
+  "commands": [
+    {
+      "argv": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "commit.log"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "status.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "HEAD",
+        "--",
+        "example",
+        "lib",
+        "packages",
+        "tool/verify_example_runtime.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "diff.log"
+    },
+    {
+      "argv": [
+        "flutter",
+        "--version",
+        "--machine"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "sdk.log"
+    },
+    {
+      "argv": [
+        "flutter",
+        "devices",
+        "--machine"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "devices.log"
+    },
+    {
+      "argv": [
+        "flutter",
+        "drive",
+        "--debug",
+        "--no-pub",
+        "--timeout=180",
+        "--driver=test_driver/integration_test.dart",
+        "--target=integration_test/profile_flow_test.dart",
+        "-d",
+        "web-server",
+        "--browser-name=chrome",
+        "--no-headless"
+      ],
+      "cwd": "example",
+      "exit_code": 0,
+      "log": "run.log"
+    },
+    {
+      "argv": [
+        "git",
+        "status",
+        "--porcelain"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "status-after.log"
+    },
+    {
+      "argv": [
+        "git",
+        "diff",
+        "HEAD",
+        "--",
+        "example",
+        "lib",
+        "packages",
+        "tool/verify_example_runtime.py"
+      ],
+      "cwd": ".",
+      "exit_code": 0,
+      "log": "diff-after.log"
+    }
+  ],
+  "flows_verified": true,
+  "result": "passed",
+  "finished_utc": "2026-09-27T03:57:31.806316+00:00"
+}

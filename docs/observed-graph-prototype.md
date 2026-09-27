@@ -176,3 +176,38 @@ policy, and a separate Provider visibility story. Do not add event hooks merely
 to call this a complete graph. This issue's prototype can close without shipping
 a public API or changing cleanup policy.
 
+## Verification
+
+Local verification on 2026-09-27:
+
+- `python3 tool/diagnostics/run.py test`: six focused tests, analyzer clean, and
+  forced-GC collection of the closed scope and instance with a retained snapshot.
+- Core: 37 tests; generator: 16; Flutter adapter: 20; example: four. All associated
+  analyzers passed. Example regeneration left the committed output unchanged.
+- `bash tool/verify_consumers.sh`: passed all consumer contracts.
+- Python tool suite: 15 tests passed after installing `tool/requirements.txt` in
+  an ignored virtual environment; the system Python initially lacked PyYAML.
+- All recorded benchmark source hashes match the checked-out sources; all 18
+  benchmark scenarios passed value, notification and cleanup checks.
+
+The CI package matrix now runs the prototype tests and collection check. Timing
+measurements remain an explicit local experiment. This change is one cohesive
+prototype with its tests, runner and decision report (roughly 600 authored lines,
+plus generated measurement evidence); it exceeds a 400-line review slice rather
+than separating tests or the decision from the behavior they validate.
+
+## Standards
+
+An independent read-only review of `547b544...8e4b001` found no documented-standard
+violations or reportable code smells. It checked the contribution conventions,
+English content, focused behavior tests, and separation of measurement evidence
+from ignored build output. Tool-enforced rules were covered by the analyzers.
+
+## Spec
+
+A separate independent review against issue #49 found no missing, partial,
+incorrect or unrequested behavior. It confirmed the schema and uncertainty
+boundaries, lifecycle/collection evidence, three scenarios, paired baseline
+workload, and the decision to adjust before designing a public API.
+
+Standards: zero findings. Spec: zero findings. No unresolved review items.

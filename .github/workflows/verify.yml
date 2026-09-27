@@ -8,6 +8,10 @@ on:
 permissions:
   contents: read
 
+env:
+  # Evidence must describe the checkout, not Python's generated import cache.
+  PYTHONDONTWRITEBYTECODE: '1'
+
 concurrency:
   group: verify-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true

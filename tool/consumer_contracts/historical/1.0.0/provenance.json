@@ -1,0 +1,31 @@
+{
+  "kind": "original-release-consumers",
+  "repository": "https://github.com/argote-dev/factory",
+  "tag": "v1.0.0",
+  "commit": "ccbcf3a4be58f89b4c898b52fbd4af3c380134b2",
+  "source_prefix": "tool/consumer_contracts/",
+  "description": "Verbatim consumers from the actual 1.0.0 release, including external interface implementers and frozen generated output. No retrospective fixtures.",
+  "files": {
+    "dart/.gitignore": "1ac8c6b4466db8f242ba0fb00c398a43ef181d74e1614fadee95da5302f09f53",
+    "dart/analysis_options.yaml": "cba9300c4c0f6c7cb21f0b8a1c98b214168b6ada0dd5d4ce84fbdaf809767e16",
+    "dart/bin/async_startup.dart": "a7560969fd56cd627fbc952b6f5d96cd709251f8b396a3e3c23a7b14cfc2315a",
+    "dart/lib/async_startup.dart": "c44c3448e4e12243de62284a90900f3b04268b335f01184944c93238a4cbf786",
+    "dart/pubspec.yaml": "2835488cbfc4c44caf8b846e2a809422ff860df364bacabca36bb8f0885be247",
+    "dart/test/async_startup_test.dart": "1d0d0e8a5911715a2db49fbb0332551d04199b85c52252785c1c4d3c6ed1c08d",
+    "dart/test/interfaces_test.dart": "b13309d179a13ad3d4b1b013002680b89e251091381f1e111affd35485f59b18",
+    "dart/test/public_contract_test.dart": "8b632a0f5279135180b74eec978d010452806711b2d69f2db4025e73561ea38e",
+    "dart_generated/.gitignore": "b5e25b40521aae0014e8bf06ef9b33e18167db1be4a327572370ff4a802450fb",
+    "dart_generated/analysis_options.yaml": "cba9300c4c0f6c7cb21f0b8a1c98b214168b6ada0dd5d4ce84fbdaf809767e16",
+    "dart_generated/lib/dependencies.dart": "f52cf269ba846829f431da7ce44d94fe1ebefafe979ade5c15470cff07243d6b",
+    "dart_generated/lib/registry.dart": "fa94b1175b0d259d2777193248056fb3cdde538627ecba49801bf626eb01bb25",
+    "dart_generated/lib/registry.factory.dart": "bc1243d9c108968b7752a632fb264da184751fd974aab92fc5db52b782e007e6",
+    "dart_generated/pubspec.yaml": "99be2e2cb6d5e1ab2da40eca7472e5b5bdb0db53491b28ad7985e43c2a46e7e6",
+    "dart_generated/test/public_contract_test.dart": "b9c5222c34304465aaf3176a028137bf1edf135f2777e239a3968cb576266c66",
+    "flutter/.gitignore": "7185087daf42be4732f9f363de21fc5b77a37ee307264e41349f5df2c2afc1be",
+    "flutter/lib/dependencies.dart": "59b9293d75b840ee8ddce8730f3022e165f68ed64b07a4b9da93b5a9cb021990",
+    "flutter/lib/registry.dart": "05377d1703b6524f221e4e7fec95e7efbd88c90b24f57dd310d83d02feb70845",
+    "flutter/lib/registry.factory.dart": "8fab3b8c397d2bd4df04912d01f9745e099903cbd6fb7e00bebd8d9624cbc1dd",
+    "flutter/pubspec.yaml": "25499637582a788b7c56a210eb1e6a7b91bc928080c5d6576d42c7ce9f3b133a",
+    "flutter/test/public_contract_test.dart": "17551f80a9f30d275a64580425940931abcbd4cff454a94e6ab1851a2d56d45a"
+  }
+}

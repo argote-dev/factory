@@ -27,6 +27,7 @@ PACKAGES = {
     'factory_provider': ROOT,
     'factory_generator': ROOT / 'packages/factory_generator',
 }
+PUBLISHED_HISTORY = ROOT / 'tool/consumer_contracts/historical/1.0.0'
 
 
 def digest(data):
@@ -129,7 +130,7 @@ class PackageHandler(http.server.BaseHTTPRequestHandler):
 
 def copy_consumer(source, destination, version, runtime_only):
     shutil.copytree(source, destination, ignore=shutil.ignore_patterns(
-        '.dart_tool', 'build', 'pubspec.lock', 'pubspec_overrides.yaml', '.gitignore'))
+        '.dart_tool', 'build', 'pubspec.lock', 'pubspec_overrides.yaml'))
     spec = manifest(destination / 'pubspec.yaml')
     for section in ('dependencies', 'dev_dependencies'):
         for name in PACKAGES:
@@ -140,8 +141,8 @@ def copy_consumer(source, destination, version, runtime_only):
         for name in ('build_runner', 'factory_generator'):
             spec.get('dev_dependencies', {}).pop(name, None)
     (destination / 'pubspec.yaml').write_text(yaml.safe_dump(spec, sort_keys=False))
-    # Independent analysis: never inherit configuration from the checkout.
-    (destination / 'analysis_options.yaml').write_text('analyzer:\n  errors:\n    unused_import: error\n')
+    # The isolated directory cannot inherit checkout analysis options. Preserve
+    # the consumer's own configuration (or its absence) verbatim.
 
 
 def assert_isolated(consumer, scratch, runtime_only):
@@ -203,6 +204,54 @@ def verify_history():
         if digest((generated / path).read_bytes()) != expected:
             raise RuntimeError(f'Frozen generated Dart consumer edited: {path}')
     return base
+
+
+def verify_published_history():
+    provenance = json.loads((PUBLISHED_HISTORY / 'provenance.json').read_text())
+    commit = subprocess.check_output(
+        ['git', 'rev-parse', provenance['tag'] + '^{}'], cwd=ROOT, text=True).strip()
+    if commit != provenance['commit']:
+        raise RuntimeError('Published baseline tag differs from its release commit')
+    released_paths = subprocess.check_output(
+        ['git', 'ls-tree', '-r', '--name-only', commit, '--', *[
+            provenance['source_prefix'] + kind for kind in ('dart', 'flutter', 'dart_generated')]],
+        cwd=ROOT, text=True).splitlines()
+    expected_paths = {path.removeprefix(provenance['source_prefix']) for path in released_paths}
+    actual_paths = {path.relative_to(PUBLISHED_HISTORY).as_posix()
+                    for kind in ('dart', 'flutter', 'dart_generated')
+                    for path in (PUBLISHED_HISTORY / kind).rglob('*') if path.is_file()}
+    if expected_paths != set(provenance['files']) or actual_paths != expected_paths:
+        raise RuntimeError('Published baseline consumer file set changed')
+    for path, expected in provenance['files'].items():
+        released = subprocess.check_output(
+            ['git', 'show', f'{commit}:{provenance["source_prefix"]}{path}'], cwd=ROOT)
+        if (PUBLISHED_HISTORY / path).read_bytes() != released or digest(released) != expected:
+            raise RuntimeError(f'Published baseline consumer differs from release: {path}')
+    return provenance
+
+
+def published_archives(archives):
+    provenance = json.loads((PUBLISHED_HISTORY / 'published_archives.json').read_text())
+    if set(provenance['packages']) != set(PACKAGES):
+        raise RuntimeError('Published baseline must pin all three packages')
+    for name, entry in provenance['packages'].items():
+        commit = subprocess.check_output(
+            ['git', 'rev-parse', entry['tag'] + '^{}'], cwd=ROOT, text=True).strip()
+        if commit != entry['commit'] or commit != json.loads(
+                (PUBLISHED_HISTORY / 'provenance.json').read_text())['commit']:
+            raise RuntimeError(f'Published package tag differs from consumer release: {name}')
+        if entry['version'] != '1.0.0':
+            raise RuntimeError(f'Unexpected published baseline version: {name}')
+        archive = archives / f'{name}.tar.gz'
+        if not archive.exists():
+            with urllib.request.urlopen(entry['archive_url'], timeout=60) as response:
+                data = response.read()
+            if digest(data) != entry['sha256']:
+                raise RuntimeError(f'Published archive SHA-256 mismatch: {name}')
+            archive.write_bytes(data)
+        if digest(archive.read_bytes()) != entry['sha256']:
+            raise RuntimeError(f'Published archive SHA-256 mismatch: {name}')
+    return provenance
 
 
 def sensitivity_probes(runner, scratch, version, env, server):
@@ -283,25 +332,38 @@ def main():
     mode.add_argument('--probes-only', action='store_true')
     mode.add_argument('--generator-only', action='store_true')
     mode.add_argument('--baseline-release', action='store_true', help='Build and execute immutable v0.3.0 runtime baseline')
+    mode.add_argument('--published-baseline', action='store_true',
+                      help='Execute immutable 1.0 consumers against pinned pub.dev 1.0.0 archives')
     parser.add_argument('--lower-dependencies', action='store_true')
     args = parser.parse_args()
+    if args.published_baseline and (args.archives or args.lower_dependencies):
+        parser.error('--published-baseline cannot use candidate archives or lower dependencies')
     args.output = args.output.resolve()
     args.output.mkdir(parents=True, exist_ok=True)
     runner = Runner(args.output)
-    version = check_versions()
-    history = verify_history()
-    archives = args.archives.resolve() if args.archives else args.output / 'archives'
+    archives = args.archives.resolve() if args.archives else args.output / (
+        'published-archives' if args.published_baseline else 'archives')
     archives.mkdir(parents=True, exist_ok=True)
     evidence = dict(commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=ROOT, text=True).strip(),
                     dirty=bool(subprocess.check_output(['git', 'status', '--porcelain'], cwd=ROOT)),
-                    version=version, runtime_only=args.runtime_only, commands=runner.records, result='failed')
+                    runtime_only=args.runtime_only, commands=runner.records, result='failed',
+                    archive_source='pub.dev' if args.published_baseline else (
+                        'rebuilt-v0.3.0' if args.baseline_release else 'candidate'))
     try:
+        version = check_versions()
+        history = verify_history()
+        if not args.baseline_release:
+            evidence['consumer_provenance'] = verify_published_history()
+        evidence['version'] = version
         evidence['dart'] = runner.run(['dart', '--version'], ROOT).strip()
         if not args.generator_only:
             evidence['flutter'] = runner.run(['flutter', '--version'], ROOT).strip()
         if args.baseline_release and args.archives:
             raise RuntimeError('Baseline must be built from its recorded release commit')
-        if args.baseline_release:
+        if args.published_baseline:
+            evidence['published_provenance'] = published_archives(archives)
+            version = evidence['version'] = '1.0.0'
+        elif args.baseline_release:
             release_commit = json.loads((history / 'provenance.json').read_text())['commit']
             evidence['runtime_commit'] = release_commit
             with tempfile.TemporaryDirectory(prefix='factory-baseline-') as directory:
@@ -333,7 +395,7 @@ def main():
             try:
                 # Validate the exact archive contents; no source overrides or sibling paths.
                 for name in PACKAGES:
-                    if args.probes_only:
+                    if args.probes_only or args.published_baseline:
                         continue
                     if args.generator_only and name != 'factory_generator':
                         continue
@@ -347,9 +409,14 @@ def main():
                     runner.run([executable, 'pub', 'publish', '--dry-run'], package, env)
                     runner.run([executable, 'test', *(['--no-pub'] if executable == 'flutter' else [])], package, env)
                     runner.run([executable, 'analyze', *(['--no-pub'] if executable == 'flutter' else []), 'lib', 'test'], package, env)
-                for label, base in [('current', ROOT / 'tool/consumer_contracts'),
-                                    ('historical', history),
-                                    ('previous-generation', history.parent / '0.3.0-generated')]:
+                consumers = [('current', ROOT / 'tool/consumer_contracts'),
+                             ('historical', history),
+                             ('previous-generation', history.parent / '0.3.0-generated')]
+                if args.published_baseline:
+                    consumers = [('published-1.0.0', PUBLISHED_HISTORY)]
+                elif not args.baseline_release:
+                    consumers.append(('published-1.0.0', PUBLISHED_HISTORY))
+                for label, base in consumers:
                     for kind in ('dart', 'flutter', 'dart_generated'):
                         if args.probes_only and (label != 'current' or kind != 'dart'):
                             continue
@@ -359,7 +426,7 @@ def main():
                             continue
                         verify_consumer(runner, base / kind, scratch / f'{label}-{kind}',
                                         version, env, scratch, args.runtime_only, args.lower_dependencies)
-                if not args.generator_only and not args.probes_only:
+                if not args.generator_only and not args.probes_only and not args.published_baseline:
                     frozen = ROOT / 'tool/consumer_contracts/historical/0.3.0-interfaces'
                     provenance = json.loads((frozen / 'provenance.json').read_text())
                     for path, expected in provenance['files'].items():
@@ -367,12 +434,16 @@ def main():
                             raise RuntimeError(f'Frozen implementer changed: {path}')
                     verify_consumer(runner, frozen, scratch / 'historical-interfaces',
                                     version, env, scratch, args.runtime_only)
-                if not args.runtime_only and not args.generator_only and not args.baseline_release:
+                if not any((args.runtime_only, args.generator_only, args.baseline_release,
+                            args.published_baseline)):
                     sensitivity_probes(runner, scratch, version, env, server)
                 evidence['result'] = 'passed'
             finally:
                 server.shutdown()
                 server.server_close()
+    except Exception as error:
+        evidence['error'] = str(error)
+        raise
     finally:
         (args.output / 'evidence.json').write_text(json.dumps(evidence, indent=2) + '\n')
 

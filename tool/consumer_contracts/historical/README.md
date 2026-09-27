@@ -13,9 +13,43 @@ explicitly; it is not a file claimed to have existed in the release.
 The pre-resolver interface shape is used only as a controlled 0.2→0.3 break probe,
 not as a claim of a break within 1.x.
 
-After a real 1.0 release, archive its actual public consumers under `1.0.0/`,
-record its immutable release commit and file hashes, and add that baseline to the
-same harness. Do not label this unpublished candidate as a historical release.
+`1.0.0/` contains the actual Dart manual, Dart generated and Flutter consumers
+from `v1.0.0` (`ccbcf3a4be58f89b4c898b52fbd4af3c380134b2`). Its provenance
+records every original file and SHA-256. The manual Dart consumer already
+implements `FactoryRef`, `FactoryResolver` and `FactoryVisitor`; these are
+original release fixtures, not retrospective probes. The verifier checks the
+complete file set and compares each file against Git and its recorded hash.
+
+`1.0.0/published_archives.json` separately pins the three **published** pub.dev
+archives, with URLs, publication timestamps, package tags, release commit and
+SHA-256. These are not archives rebuilt from Git or produced by candidate CI.
+`--published-baseline` downloads them into `published-archives/` and checks their
+hashes, including when reusing a previous download. A mismatch is a failure;
+never update a pin merely to make verification pass.
+
+Run the published baseline, then the candidate, from the repository root:
+
+```sh
+python tool/verify_release.py --published-baseline --output build/acceptance/published-1.0.0
+python tool/verify_release.py --output build/acceptance/current
+```
+
+Install `tool/requirements.txt` first and use the current CI SDK (Flutter 3.47.2 /
+Dart 3.13.2). Both runs use isolated hosted caches, without local overrides, and
+modify only resolution metadata in disposable copies. Frozen generated output
+is analyzed and tested before regeneration, then compared byte-for-byte and
+tested again. Candidate runtime-minimum and generator-minimum modes also include
+the 1.0 consumers appropriate to those SDKs; the 0.3 baseline remains separate.
+Keep both output directories: `evidence.json` records provenance, hashes, SDKs,
+commands, exact dependency resolutions and results; numbered logs and downloaded
+archives accompany it. CI uploads the two evidence bundles separately even on
+failure. No claim of a tested future candidate is made until its own run passes.
+
+When adding a later baseline, copy from its real release commit, record original
+file hashes, and obtain the published archive hashes independently from pub.dev.
+Put any newly authored retrospective probes in a separate directory with explicit
+provenance. Never edit a frozen consumer to accommodate a candidate. Stage B of
+issue #46 (scheduled dependency canary) is separate and is not enabled here.
 
 `0.3.0-generated/` is a retrospective pure-Dart consumer whose frozen module is
 verified by regenerating with the actual 0.3 release generator, then with the

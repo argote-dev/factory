@@ -1,0 +1,32 @@
+{
+  "source": "pub.dev (published bytes, not rebuilt CI archives)",
+  "packages": {
+    "factory_core": {
+      "version": "1.0.0",
+      "metadata_url": "https://pub.dev/api/packages/factory_core/versions/1.0.0",
+      "archive_url": "https://pub.dev/api/archives/factory_core-1.0.0.tar.gz",
+      "sha256": "6af0899978422bcbdd3330d3c05f60466a0e1d60e80492203d686dd4e45dc6f6",
+      "published": "2026-09-25T01:37:47.052051Z",
+      "tag": "factory_core-v1.0.0",
+      "commit": "ccbcf3a4be58f89b4c898b52fbd4af3c380134b2"
+    },
+    "factory_provider": {
+      "version": "1.0.0",
+      "metadata_url": "https://pub.dev/api/packages/factory_provider/versions/1.0.0",
+      "archive_url": "https://pub.dev/api/archives/factory_provider-1.0.0.tar.gz",
+      "sha256": "221c60dfa1cdcd9b281a662074c457c6a31d03a5b94cad2ee5f18236c8b4da9b",
+      "published": "2026-09-25T01:40:27.623830Z",
+      "tag": "factory_provider-v1.0.0",
+      "commit": "ccbcf3a4be58f89b4c898b52fbd4af3c380134b2"
+    },
+    "factory_generator": {
+      "version": "1.0.0",
+      "metadata_url": "https://pub.dev/api/packages/factory_generator/versions/1.0.0",
+      "archive_url": "https://pub.dev/api/archives/factory_generator-1.0.0.tar.gz",
+      "sha256": "1511b152b99672cdb23df44069c0a5eb3c1b41894bc9a3db23d80f31ec461b5d",
+      "published": "2026-09-25T01:40:43.318059Z",
+      "tag": "factory_generator-v1.0.0",
+      "commit": "ccbcf3a4be58f89b4c898b52fbd4af3c380134b2"
+    }
+  }
+}

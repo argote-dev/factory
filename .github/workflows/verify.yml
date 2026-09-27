@@ -72,12 +72,19 @@ jobs:
         with:
           python-version: '3.13'
       - run: pip install -r tool/requirements.txt
+      - run: python -m unittest discover -s tool -p 'test_*.py'
       - run: python tool/verify_release.py --baseline-release --output build/acceptance/baseline
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: baseline-evidence
           path: build/acceptance/baseline
+      - run: python tool/verify_release.py --published-baseline --output build/acceptance/published-1.0.0
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: published-1.0.0-evidence
+          path: build/acceptance/published-1.0.0
       - run: python tool/verify_release.py --output build/acceptance/current
       - uses: actions/upload-artifact@v4
         if: always()

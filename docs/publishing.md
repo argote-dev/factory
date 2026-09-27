@@ -73,6 +73,7 @@ Prepare an isolated Python environment and run the hosted-artifact checks:
 ```sh
 python3 -m venv /tmp/factory-verification
 /tmp/factory-verification/bin/pip install -r tool/requirements.txt
+/tmp/factory-verification/bin/python tool/verify_release.py --published-baseline --output build/acceptance/published-1.0.0
 /tmp/factory-verification/bin/python tool/verify_release.py --output build/acceptance/current
 ```
 
@@ -102,6 +103,16 @@ in the compatible current Flutter job; see the explicit combinations in support.
 3.47.2 / Dart 3.13.2. Each output includes logs, resolved package versions,
 archive SHA-256 hashes, commit, SDK versions and expected failures. A dirty
 worktree run is diagnostic, not the final acceptance of a commit.
+
+The published 1.0 baseline downloads the three immutable pub.dev archives and
+verifies their pinned SHA-256 hashes; it never rebuilds them from Git. Its
+evidence and `published-archives/` are separate from candidate `archives/`.
+Both runs execute the original 1.0 consumers, including public interface
+implementers and generated output before regeneration. The existing rebuilt
+0.3 baseline (`--baseline-release`) remains in CI. See the
+[historical consumer instructions](../tool/consumer_contracts/historical/README.md)
+for provenance and maintenance. The candidate command includes the 1.0 checks
+automatically, including when reusing archives for minimum-SDK checks.
 
 The current run deliberately removes an interface member from an implementer,
 breaks immediate closure rejection in a disposable cache, and omits the core

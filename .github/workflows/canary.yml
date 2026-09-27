@@ -1,0 +1,65 @@
+name: Published dependency canary
+
+on:
+  schedule:
+    - cron: '23 9 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: published-canary-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    # This signal is not a release gate. Failures remain visible in evidence.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v7
+        id: checkout
+        with:
+          fetch-depth: 0
+      - uses: subosito/flutter-action@v2
+        id: sdk
+        with:
+          channel: stable
+      - uses: actions/setup-python@v6
+        id: python
+        with:
+          python-version: '3.13'
+      - run: pip install -r tool/requirements.txt
+        id: dependencies
+      - run: python tool/verify_canary.py --output build/canary
+        id: canary
+      - name: Preserve setup failures and summarize
+        if: always()
+        env:
+          STEP_RESULTS: ${{ toJSON(steps) }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          output = Path('build/canary')
+          output.mkdir(parents=True, exist_ok=True)
+          report = output / 'evidence.json'
+          data = json.loads(report.read_text()) if report.exists() else {}
+          if 'finished' not in data:
+              data.update(result='failed', category='infrastructure', informational=True,
+                          error='Workflow setup failed or canary was interrupted; inspect step results and logs.')
+              report.write_text(json.dumps(data, indent=2) + '\n')
+              (output / 'summary.md').write_text('# Canary incomplete\n\nInfrastructure/setup failure; inspect workflow logs.\n')
+          (output / 'workflow-steps.json').write_text(os.environ['STEP_RESULTS'] + '\n')
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
+              summary.write((output / 'summary.md').read_text())
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: published-canary-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/canary
+          include-hidden-files: true
+          retention-days: 30

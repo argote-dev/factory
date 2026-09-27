@@ -1,0 +1,11 @@
+name: provider_canary_control
+publish_to: none
+environment:
+  sdk: '>=3.11.0 <4.0.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.5+1
+dev_dependencies:
+  flutter_test:
+    sdk: flutter

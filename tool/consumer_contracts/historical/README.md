@@ -48,8 +48,9 @@ failure. No claim of a tested future candidate is made until its own run passes.
 When adding a later baseline, copy from its real release commit, record original
 file hashes, and obtain the published archive hashes independently from pub.dev.
 Put any newly authored retrospective probes in a separate directory with explicit
-provenance. Never edit a frozen consumer to accommodate a candidate. Stage B of
-issue #46 (scheduled dependency canary) is separate and is not enabled here.
+provenance. Never edit a frozen consumer to accommodate a candidate. The separate
+[scheduled dependency canary](../../../docs/dependency-canary.md) reuses these
+fixtures with published 1.x dependencies; its results are informational.
 
 `0.3.0-generated/` is a retrospective pure-Dart consumer whose frozen module is
 verified by regenerating with the actual 0.3 release generator, then with the

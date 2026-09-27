@@ -29,6 +29,10 @@ existing generated output without installing the generator.
 
 ## Evidence and reproduction
 
+The separate [published dependency canary](dependency-canary.md) tracks published
+1.x packages and the latest dependencies allowed by their ranges. It is an
+informational signal, not an addition to the verified matrix or a release gate.
+
 [Candidate verification](publishing.md#candidate-acceptance-without-publication)
 explains the commands. `tool/verify_release.py` records commit, SDKs, command
 outputs, resolved dependencies and archive hashes. All SDK jobs consume the same

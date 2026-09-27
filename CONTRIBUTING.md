@@ -7,6 +7,9 @@ Thank you for considering a contribution to Factory.
 - Search existing issues and pull requests to avoid duplicate work.
 - Open an issue before making a substantial API or architecture change.
 - Keep changes focused and include tests for behavior changes.
+- Write all repository contributions in English, including documentation, code
+  comments, test descriptions, and commit messages, even when discussing work
+  in another language.
 - Do not include generated build output, local configuration, credentials, or
   editor files.
 

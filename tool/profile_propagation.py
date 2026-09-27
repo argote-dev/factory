@@ -83,6 +83,12 @@ def capture(output, run):
                         timeline = rpc(uri, "getVMTimeline")
                         cpu = rpc(uri, "getCpuSamples", isolateId=isolate,
                                   timeOriginMicros=start, timeExtentMicros=end-start)
+                        events = [event for event in timeline["traceEvents"]
+                                  if event.get("name") == "factory.propagate"]
+                        if (sum(e["ph"] == "B" for e in events) != 50
+                                or sum(e["ph"] == "E" for e in events) != 50
+                                or cpu["sampleCount"] == 0):
+                            raise RuntimeError("Incomplete timeline or empty CPU capture")
                         for name, data in (("timeline", timeline), ("cpu", cpu)):
                             with gzip.open(directory / f"{name}.json.gz", "wt") as f:
                                 json.dump(data, f)

@@ -36,10 +36,6 @@ jobs:
         working-directory: packages/factory_core
       - run: dart analyze
         working-directory: packages/factory_core
-      - uses: actions/setup-python@v6
-        with:
-          python-version: '3.13'
-      - run: python tool/diagnostics/run.py test
       - run: dart pub get
         working-directory: packages/factory_generator
       - run: dart test

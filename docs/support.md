@@ -1,81 +1,59 @@
 # Compatibility and validation
 
-Factory — Maneja tus dependencias sin barreras. Factory 1.0 support claims are scoped to the completed checks below.
-A platform scaffold or successful compilation does not establish device execution.
+Factory contains a standalone Dart core, a Flutter adapter for Provider, and an
+optional generator. Runtime applications do not need to install the generator.
 
 ## SDK and dependency matrix
 
-| Consumer | SDK | Packages / dependencies | Verification |
-| --- | --- | --- | --- |
-| Manual Dart runtime | Dart 3.3.0 | Candidate core; no Flutter or generator | Packaged core tests, analysis, current/historical consumers |
-| Provider runtime, including already generated modules | Flutter 3.19.0 / Dart 3.3.0 | Candidate core + adapter; Provider **6.1.5+1** fixed; no generator installed | Packaged runtime tests, analysis, manual/generated and historical consumers |
-| Optional generation | Dart 3.11.0, without Flutter | Coordinated candidate generator/core | Packaged builder tests, analysis, current Dart consumer and frozen 0.3-generated Dart output/regeneration |
-| Current Dart/Flutter composition and generation | Flutter 3.47.2 / Dart 3.13.2 | Coordinated candidate packages; exact dependency resolutions in evidence.json | All packaged tests, current and 0.3 consumers, existing output, regeneration and drift |
+| Consumer | Minimum SDK | Dependencies |
+| --- | --- | --- |
+| Manual Dart runtime | Dart 3.3.0 | `factory_core` |
+| Flutter runtime, including existing generated modules | Flutter 3.19.0 / Dart 3.3.0 | `factory_provider`, `factory_core`, Provider 6.1.5+1 |
+| Optional generation | Dart 3.11.0 | Coordinated `factory_generator` and `factory_core` versions |
 
-The runtime minimums are retained throughout 1.x. Generator SDK increases follow
-the [advance-notice policy](compatibility-policy.md) and never change the runtime
-minimum. SDK minimums are distinct from dependency minimums: Provider 6.1.5+1 is
-tested explicitly; build tooling resolves within its declared bounds and the
-report records exact versions. We do not promise every historical combination of
-analyzer/build/source_gen or every combination of Factory minor releases.
+Runtime minimums are retained throughout 1.x. Generator SDK changes follow the
+[compatibility policy](compatibility-policy.md). Dependency minimums and SDK
+minimums are separate: the runtime verification job fixes Provider to its lower
+bound, while generator verification records the resolved build dependencies.
 
-Historical 0.3 generated output is tested on the candidate runtime before
-regeneration. Regeneration is supported with the coordinated candidate generator
-on Dart 3.11 for pure Dart and on the fixed current Flutter SDK for Flutter.
-Flutter 3.41.0 with the generator is unsupported: its `meta 1.17.0` SDK pin
-conflicts with analyzer 10.2 requiring `meta >=1.18.0`. This does not affect
-the runtime-only Flutter 3.19 minimum. No overrides are used to bypass that conflict. A runtime-only application can retain
-existing generated output without installing the generator.
+Flutter 3.41.0 cannot resolve the current generator: its `meta 1.17.0` SDK pin
+conflicts with analyzer 10.2 requiring `meta >=1.18.0`. Runtime-only applications
+can keep existing generated output without installing the generator. Do not use
+dependency overrides to bypass this conflict.
 
-## Evidence and reproduction
+## Automated verification
 
-The separate [published dependency canary](dependency-canary.md) tracks published
-1.x packages and the latest dependencies allowed by their ranges. It is an
-informational signal, not an addition to the verified matrix or a release gate.
+The [Verify workflow](../.github/workflows/verify.yml) configures:
 
-[Candidate verification](publishing.md#candidate-acceptance-without-publication)
-explains the commands. `tool/verify_release.py` records commit, SDKs, command
-outputs, resolved dependencies and archive hashes. All SDK jobs consume the same
-three Pub archives, not independently modified checkouts. It checks actual
-hosted package resolution without local overrides. Expected failures verify
-interface, lifecycle and omitted-file detection, followed by passing restorations.
+- Package tests, analysis, generation drift checks, and external consumers on
+  Linux, macOS, and Windows with Flutter 3.47.2.
+- Web example compilation on all three hosts and native example compilation on
+  macOS and Windows.
+- Isolated Pub archive checks with current and frozen 0.3/1.0 consumers.
+- Runtime checks on Flutter 3.19.0 and generator checks on Dart 3.11.0, using the
+  same archives produced by the current-SDK job.
 
-The [Verify workflow](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
-uploads `current-evidence`, `runtime-minimum-evidence`,
-`generator-minimum-evidence` and `baseline-evidence`. Those artifacts are evidence
-only for the commit in a completed run. Local acceptance is recorded separately
-in the [candidate report](acceptance/factory-1.0.md); the older 54-test validation record applied to an earlier
-implementation and is not evidence for 1.0.
+A configured job is not proof of a passing run. Check the
+[workflow results](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
+for the commit being evaluated. Release tags must reference a commit whose own
+Verify run passed. CI uploads reports containing commands, SDKs, dependency
+versions, archive hashes, and results; generated reports are not versioned.
 
-## Completed hosted verification
+See [contributing](../CONTRIBUTING.md) for local checks and
+[release verification](publishing.md#candidate-acceptance-without-publication)
+for isolated artifact testing. The separate
+[dependency canary](dependency-canary.md) checks published packages against newer
+allowed dependencies; it is informational and does not expand the support matrix.
 
-[Verify run 36080342683](https://github.com/argote-dev/factory/actions/runs/36080342683)
-passed all six jobs for `ea16bb17298d42185d3047fecd800ac66e23f0c9`: Linux,
-macOS and Windows package/consumer checks, distributable artifacts, runtime
-minimum and generator minimum. The package jobs also compiled the web example,
-and the respective macOS and Windows jobs compiled native examples. This
-supplements the historical local candidate report; it does not establish
-browser or native device execution. Release tags must reference a commit whose
-own Verify run has completed successfully.
+## Platform coverage
 
-## Platform scope
+VM and widget tests, compilation, and device execution are separate checks.
+The workflow does not establish browser or native device execution, and it does
+not build the Linux native example.
 
-VM and widget tests exercise the Dart/Flutter behavior. Web/native compilation
-and device execution are separate checks, never inferred from widget tests.
-
-| Target | Candidate validation scope |
-| --- | --- |
-| macOS arm64 | Local VM/widget tests and analysis on minimum/current SDKs; hosted macOS compilation passed; native execution not verified |
-| Linux, Windows | Hosted package/consumer tests passed on both; Windows example compilation passed; Linux native build and device execution not verified |
-| Web | Compilation plus local Chrome 154 debug execution of all three example compositions; other browsers and release execution pending |
-| Android | Local debug execution on Android 17 / API 37 arm64 emulator; physical-device and release execution pending |
-| iOS | Local debug execution on iPhone 17 Pro / iOS 26.5 simulator; physical-device and release execution pending |
-
-The [runtime execution report](acceptance/example-runtime.md) records the exact
-commit, SDK, commands and logs for Chrome, Android and iOS separately. It runs the
-shared manual, annotated and Provider-only flow twice per composition, checking
-child substitution, one controller disposal per closure and preservation of
-borrowed parent values. These local results supplement compilation and widget
-tests; they do not establish physical-device coverage. See the
-[reproduction walkthrough](example-runtime.md). SDK distributions come from the
-[official Flutter archive](https://docs.flutter.dev/install/archive).
+Use the [runtime verification guide](example-runtime.md) to run the shared
+manual, generated, and Provider-only example flow on Chrome, Android, or iOS.
+Record the commit, SDK, target, and build mode with each result. Emulator or
+simulator results do not establish physical-device coverage. For performance
+investigations, use the [memory](memory-profiling.md) and
+[propagation](propagation-profiling.md) guides.

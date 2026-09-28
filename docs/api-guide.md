@@ -1,8 +1,9 @@
 # Public API decision guide
 
-This guide is an inventory and decision matrix for the Factory 1.0 candidate. Its terms
-follow [the project glossary](../CONTEXT.md), and every behavior is exercised by
-the public-API tests linked below.
+Use this guide to choose declarations, resolution methods, and lifecycle options.
+`Factory<T>` describes how to construct a dependency; a scope owns its instances,
+and a module groups declarations for installation. The linked tests cover the
+public API contracts.
 
 ## Resolution and observation
 
@@ -75,7 +76,7 @@ Flutter closure is observable with `onClose` and failures with `onError`.
 
 ## Stable surface for 1.x
 
-The candidate retains the 0.3 names, including `Lifetime.scoped`,
+Factory 1.0 retains the 0.3 names, including `Lifetime.scoped`,
 `ChangePolicy`, `Register` and `FactoryRegistry`. No rename or runtime API
 migration is required. Stability covers signatures **and documented behavior**.
 See [the evolution policy](compatibility-policy.md).

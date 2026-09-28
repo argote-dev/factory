@@ -49,6 +49,13 @@ and must match the generator output.
 Maintainers should follow the [pub.dev publishing guide](docs/publishing.md)
 for release order, tag conventions, and GitHub OIDC configuration.
 
+## Documentation
+
+Keep documentation focused on using, contributing to, and maintaining Factory.
+Update existing guides with behavior changes. Keep proposals, specifications,
+research notes, review transcripts, and generated verification or profiling
+artifacts out of the repository; use issues, pull requests, or CI artifacts.
+
 ## Pull requests
 
 In the pull request description, explain the problem, the chosen approach, and

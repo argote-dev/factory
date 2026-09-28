@@ -1,9 +1,9 @@
-# Updating from 0.3 to the 1.0 candidate
+# Updating from 0.3 to 1.0
 
 The runtime surface and documented behavior are retained. Keep declarations,
 constructor injection, Provider consumers, modules, overrides and disposal
-callbacks unchanged. Update the package constraints together to the candidate
-version; keep `factory_generator` a development dependency only if you use it.
+callbacks unchanged. Update the package constraints together to version 1.0.0;
+keep `factory_generator` a development dependency only if you use it.
 There are no renamed policies, replacement adapters or business-code rewrites.
 
 The baseline comes from [release v0.3.0](https://github.com/argote-dev/factory/releases/tag/v0.3.0),
@@ -28,7 +28,7 @@ not a 1.x compatibility claim. The controlled regression probe verifies that an
 incomplete external implementation fails compilation. During 1.x, adding such
 a required member is prohibited by the [compatibility policy](compatibility-policy.md).
 
-Candidate execution results belong in the acceptance report, identified by
-commit and SDK. Creating this guide or a fixture does not itself prove that an
-upgrade passed. After an actual 1.0 release, preserve its consumers as the first
-1.x baseline rather than relabeling a candidate as a published release.
+Verification results are stored as CI artifacts, identified by commit and SDK.
+The frozen 1.0 consumers and published archive hashes are maintained in
+[`historical/1.0.0`](../tool/consumer_contracts/historical/1.0.0) as the first
+1.x compatibility baseline.

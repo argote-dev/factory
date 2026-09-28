@@ -92,10 +92,6 @@ flutter run -t lib/main_provider.dart
 Provider. Compare the compositions to see how to adopt or remove Factory without
 changing the domain classes or widgets.
 
-To evaluate the same transition in an existing app, follow the
-[adoption and removal pilot protocol](../docs/adoption-pilots.md). Running these
-entrypoints is a rehearsal, not one of the two real-app pilots.
-
 ## Verify
 
 ```sh
@@ -109,8 +105,8 @@ generated module resolution, exposure, and cleanup.
 
 For actual Chrome, Android and iOS execution, follow the
 [runtime verification walkthrough](../docs/example-runtime.md). It reuses the
-same flow with `integration_test` and records per-target evidence. Completed
-runs and their limits are listed in the [support matrix](../docs/support.md).
+same flow with `integration_test` and records per-target evidence. See the
+[support matrix](../docs/support.md) for SDK requirements and CI coverage.
 
 For memory profiling, use the separate `lib/memory_profile.dart` entrypoint and
 follow the [profiling playbook](../docs/memory-profiling.md).

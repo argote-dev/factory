@@ -1,8 +1,7 @@
 # Factory 1.x compatibility policy
 
-This policy governs the 1.0 candidate and future 1.x releases. It does not claim
-that 1.0 has been published. The [surface inventory](api-guide.md) identifies the
-stable API, extension points and behavioral evidence.
+This policy governs Factory 1.x releases. The [surface inventory](api-guide.md)
+identifies the stable API, extension points and behavioral evidence.
 
 During 1.x, public signatures and documented behavior remain compatible.
 Breaking changes require the next major. In particular, adding a required
@@ -27,7 +26,7 @@ before 2.0. Security fixes do not silently redefine this compatibility promise.
 - Package release versions are coordinated across core, adapter and generator.
   The adapter and generator constrain core to the same compatible major/minor
   baseline. Publish core, adapter, then generator.
-- The supported candidate combination uses all three coordinated versions.
+- The supported combination uses coordinated package versions.
   Manual consumers need only core or adapter. Historical generated 0.3 output is
   tested against the candidate runtime separately from regeneration using the
   candidate generator. No Cartesian product of every tool/runtime version is
@@ -44,7 +43,8 @@ remain the detailed behavioral evidence linked in the inventory. Historical
 consumers must be preserved verbatim with their release/tag/commit provenance;
 only their resolution environment changes when testing a candidate. Any required
 0.3 migration belongs in a separate fixture, never in the historical baseline.
-A real 1.0 release will establish the first immutable 1.x baseline.
+The frozen 1.0 consumers and published archive hashes establish the immutable
+1.x baseline in `tool/consumer_contracts/historical/1.0.0`.
 
 Release acceptance additionally requires isolated installation of Pub artifacts,
 minimum/current SDK runs, generation drift checks and controlled failing probes

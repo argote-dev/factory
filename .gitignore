@@ -8,3 +8,9 @@ coverage/
 **/doc/api/
 **/.flutter-plugins-dependencies
 **/ephemeral/
+
+# Local analysis and verification artifacts
+.codegraph/
+__pycache__/
+*.py[cod]
+.venv/

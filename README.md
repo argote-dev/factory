@@ -4,8 +4,6 @@
 
 # Factory — Manage your dependencies without barriers
 
-Dependency injection for Flutter with Provider. Adopt it gradually, test your composition, and keep the freedom to remove it.
-
 [![CI verification](https://github.com/argote-dev/factory/actions/workflows/verify.yml/badge.svg)](https://github.com/argote-dev/factory/actions/workflows/verify.yml)
 
 Dependency injection for Flutter apps that already use Provider. Declare how
@@ -317,11 +315,6 @@ This guarantee excludes the opt-in `FactoryChangeNotifier` and retained
 `FactoryResolver`: removing Factory from those classes requires replacing their
 internal resolution with constructor-injected collaborators and, for the base
 class, extending `ChangeNotifier` directly. Choose that coupling explicitly.
-
-For a bounded trial in an existing Provider app, use the
-[adoption and removal pilot protocol](docs/adoption-pilots.md). It records
-integration effort, cleanup ownership, and removal evidence. The repository
-example verifies contracts; it does not establish adoption effort in real apps.
 
 ## With annotations (optional)
 

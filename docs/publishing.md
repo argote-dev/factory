@@ -118,5 +118,5 @@ The current run deliberately removes an interface member from an implementer,
 breaks immediate closure rejection in a disposable cache, and omits the core
 entrypoint from a served archive. Each must fail for the expected reason;
 restored consumers must pass. The checkout is never mutated by these probes.
-CI uploads the reports even on failure. Do not publish, tag or close the parent
-spec as part of candidate acceptance.
+CI uploads the reports even on failure. Verification does not publish packages
+or create release tags. Keep generated evidence in `build/` or CI artifacts.

@@ -68,7 +68,3 @@ automated run for the additional borrowed-value assertions.
 Results apply only to the recorded commit, SDK, target and debug mode. The local
 client intentionally performs no network I/O. Release builds, physical phones,
 other OS/browser versions, background/restore and performance are separate checks.
-Rollback consists of removing the integration entrypoint, shared test helper,
-driver, evidence runner and its example development dependency, restoring the
-standalone widget flow and reverting this documentation and example scaffold
-adjustment; the runtime packages have no production changes.

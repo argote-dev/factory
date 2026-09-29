@@ -78,19 +78,19 @@ jobs:
       - run: pip install -r tool/requirements.txt
       - run: python -m unittest discover -s tool -p 'test_*.py'
       - run: python tool/verify_release.py --baseline-release --output build/acceptance/baseline
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: baseline-evidence
           path: build/acceptance/baseline
       - run: python tool/verify_release.py --published-baseline --output build/acceptance/published-1.0.0
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: published-1.0.0-evidence
           path: build/acceptance/published-1.0.0
       - run: python tool/verify_release.py --output build/acceptance/current
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: current-evidence
@@ -117,7 +117,7 @@ jobs:
           path: build/current
       - run: pip install -r tool/requirements.txt
       - run: python tool/verify_release.py --archives build/current/archives --runtime-only --lower-dependencies --output build/acceptance/runtime-minimum
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: runtime-minimum-evidence
@@ -143,7 +143,7 @@ jobs:
           path: build/current
       - run: pip install -r tool/requirements.txt
       - run: python tool/verify_release.py --archives build/current/archives --generator-only --output build/acceptance/generator-minimum
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: generator-minimum-evidence

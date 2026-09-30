@@ -60,7 +60,7 @@ jobs:
           with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
               summary.write((output / 'summary.md').read_text())
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: published-canary-${{ github.run_id }}-${{ github.run_attempt }}

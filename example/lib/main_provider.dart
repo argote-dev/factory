@@ -27,7 +27,7 @@ class ProviderExampleApp extends StatelessWidget {
           dispose: (_, client) => client.close(),
         ),
         ProxyProvider2<LocalProfileClient, Session, UserRepository>(
-          update: (_, client, session, __) => UserRepository(client, session),
+          update: (_, client, session, _) => UserRepository(client, session),
         ),
       ],
       child: Builder(

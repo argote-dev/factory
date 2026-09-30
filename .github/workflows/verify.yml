@@ -72,7 +72,7 @@ jobs:
         with:
           flutter-version: '3.47.2'
           cache: true
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
       - run: pip install -r tool/requirements.txt
@@ -108,7 +108,7 @@ jobs:
         with:
           flutter-version: '3.19.0'
           cache: true
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
       - uses: actions/download-artifact@v4
@@ -134,7 +134,7 @@ jobs:
       - uses: dart-lang/setup-dart@v1
         with:
           sdk: '3.11.0'
-      - uses: actions/setup-python@v6
+      - uses: actions/setup-python@v7
         with:
           python-version: '3.13'
       - uses: actions/download-artifact@v4

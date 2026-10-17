@@ -7,11 +7,54 @@ import io
 import json
 from pathlib import Path
 import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from unittest.mock import patch
 
 import verify_release as release
+
+
+class CandidateEvidenceTest(unittest.TestCase):
+    def test_command_failure_preserves_diagnostics_and_triage_area(self):
+        cases = [('resolution', 'version solving failed', 'dependency-resolution'),
+                 ('resolution', 'requires SDK version >=4.0.0', 'sdk'),
+                 ('generation', 'Builder failed', 'generation'),
+                 ('test', 'Expected: true', 'factory'),
+                 ('resolution', 'SocketException: connection reset', 'infrastructure')]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for phase, output, category in cases:
+                with self.subTest(phase=phase, category=category):
+                    runner = release.Runner(root)
+                    command = [sys.executable, '-c', f'print({output!r}); raise SystemExit(2)']
+                    with self.assertRaises(release.VerificationFailure) as failure:
+                        runner.run(command, root, phase=phase)
+                    self.assertEqual(failure.exception.category, category)
+                    self.assertEqual(runner.records[0]['exit'], 2)
+                    self.assertEqual(runner.records[0]['phase'], phase)
+                    self.assertIn(output, (root / runner.records[0]['log']).read_text())
+
+    def test_missing_executable_cannot_satisfy_an_expected_failure_probe(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            runner = release.Runner(root)
+            with self.assertRaises(release.VerificationFailure) as failure:
+                runner.run([str(root / 'missing-dart')], root, fails=True)
+            self.assertEqual(failure.exception.category, 'infrastructure')
+            self.assertEqual(runner.records[0]['exit'], -1)
+
+    def test_timeout_retains_partial_log(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            runner = release.Runner(root)
+            with patch.object(release.subprocess, 'run', side_effect=subprocess.TimeoutExpired(
+                    'dart', 600, output=b'Partial diagnostics')):
+                with self.assertRaises(release.VerificationFailure) as failure:
+                    runner.run(['dart', 'test'], root)
+            self.assertEqual(failure.exception.category, 'infrastructure')
+            self.assertIn('Partial diagnostics', (root / runner.records[0]['log']).read_text())
 
 
 class PublishedBaselineTest(unittest.TestCase):

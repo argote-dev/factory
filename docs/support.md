@@ -47,6 +47,32 @@ allowed dependencies; it is informational and does not expand the support matrix
 
 ## Platform coverage
 
+### Informational WebAssembly compilation
+
+The separate [WebAssembly workflow](../.github/workflows/wasm.yml) builds the
+example with `flutter build web --wasm --no-pub` after dependency resolution,
+using Flutter 3.47.2 on Ubuntu. It is informational: failure does not replace or
+hide the required standard web compilation in Verify. Its `wasm-evidence`
+artifact records the checkout, SDK, host, resolved dependencies, commands, logs,
+and separate resolution/compilation outcomes, including failures.
+
+Reproduce locally from `example/` with `flutter pub get` followed by
+`flutter build web --wasm --no-pub`. A successful build establishes compilation
+only for the recorded SDK and dependencies. It does not establish browser
+execution, deployment compatibility, or supported Wasm configurations for
+Factory. Inspect the workflow result for the candidate commit before claiming
+that combination compiled.
+
+Deployment and browser execution require separate validation. Flutter's Wasm
+build also includes a JavaScript fallback, so loading the page alone does not
+prove that Wasm executed. Record the browser version and confirm the active
+compilation target when testing. Multithreaded rendering requires appropriate
+COOP/COEP response headers on the hosting server; see the
+[official Flutter Wasm guide](https://docs.flutter.dev/platform-integration/web/wasm)
+for browser limitations and deployment requirements.
+
+### Runtime execution
+
 VM and widget tests, compilation, and device execution are separate checks.
 The workflow does not establish browser or native device execution, and it does
 not build the Linux native example.

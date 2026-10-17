@@ -1,0 +1,66 @@
+name: WebAssembly (informational)
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: wasm-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  example:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    continue-on-error: true
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.2'
+          cache: true
+      - name: Record checkout and SDK
+        run: |
+          mkdir -p build/wasm-evidence
+          git rev-parse HEAD > build/wasm-evidence/commit.txt
+          flutter --version --machine > build/wasm-evidence/sdk.json
+          uname -a > build/wasm-evidence/host.txt
+      - name: Resolve example dependencies
+        id: resolve
+        working-directory: example
+        run: |
+          echo 'flutter pub get' > ../build/wasm-evidence/resolve.log
+          flutter pub get 2>&1 | tee -a ../build/wasm-evidence/resolve.log
+          cp pubspec.lock ../build/wasm-evidence/pubspec.lock
+      - name: Compile example to WebAssembly
+        id: compile
+        working-directory: example
+        run: |
+          echo 'flutter build web --wasm --no-pub' > ../build/wasm-evidence/build.log
+          flutter build web --wasm --no-pub 2>&1 | tee -a ../build/wasm-evidence/build.log
+      - name: Record result
+        if: always()
+        env:
+          RESOLVE_OUTCOME: ${{ steps.resolve.outcome }}
+          COMPILE_OUTCOME: ${{ steps.compile.outcome }}
+        run: |
+          mkdir -p build/wasm-evidence
+          {
+            echo 'WebAssembly example compilation (informational)'
+            echo "Dependency resolution: $RESOLVE_OUTCOME"
+            echo "Wasm compilation: $COMPILE_OUTCOME"
+            echo 'This check does not establish browser execution or deployment support.'
+            echo 'The required standard web build remains in Verify.'
+          } | tee build/wasm-evidence/result.txt >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: wasm-evidence
+          path: build/wasm-evidence

@@ -120,3 +120,18 @@ entrypoint from a served archive. Each must fail for the expected reason;
 restored consumers must pass. The checkout is never mutated by these probes.
 CI uploads the reports even on failure. Verification does not publish packages
 or create release tags. Keep generated evidence in `build/` or CI artifacts.
+
+Candidate reports include package and consumer resolutions, generated-output
+hashes before/after regeneration, and command phases. Unexpected command failures
+carry a triage category: `factory`, `factory-provider-integration`, `generation`,
+`dependency-resolution`, `sdk`, or `infrastructure`. These categories guide
+investigation; the command log establishes the actual cause. Integrity and other
+verifier failures use `verification`. Missing executables and command timeouts
+retain diagnostics and cannot satisfy an expected-failure probe. Consumers are
+analyzed and tested both before and after regeneration.
+
+Archive dependency resolution uses `dart pub get --no-example`: the bundled example
+requires the optional generator's SDK, independently of the runtime minimum.
+Using Flutter's bundled Dart also avoids Flutter 3.19 preparing example tooling
+after resolution. Package tests and analysis still use Flutter for the adapter.
+The example is built and tested separately by the current-SDK package jobs.

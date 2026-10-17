@@ -1,3 +1,8 @@
+## 1.0.1
+
+- Coordinate with the updated optional factory_generator 1.0.1 toolchain.
+- Preserve the public runtime API and Dart 3.3 minimum.
+
 ## 1.0.0
 
 - Stabilize the existing 0.3 public API as Factory 1.0.0.

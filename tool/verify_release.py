@@ -21,6 +21,8 @@ import urllib.request
 
 import yaml
 
+from verification_failures import classify_failure
+
 ROOT = Path(__file__).resolve().parent.parent
 PACKAGES = {
     'factory_core': ROOT / 'packages/factory_core',
@@ -55,24 +57,49 @@ def check_versions():
     return version
 
 
+class VerificationFailure(RuntimeError):
+    def __init__(self, category, message):
+        super().__init__(message)
+        self.category = category
+
+
 class Runner:
     def __init__(self, output):
         self.output = output
         self.records = []
 
-    def run(self, command, cwd, env=None, fails=False):
+    def run(self, command, cwd, env=None, fails=False, phase=None):
         index = len(self.records)
+        phase = phase or ('sdk' if '--version' in command else
+                          'resolution' if command[1:3] == ['pub', 'get'] else
+                          'generation' if command[1:3] == ['run', 'build_runner'] else
+                          'analysis' if command[1:2] == ['analyze'] else
+                          'test' if command[1:2] == ['test'] else 'packaging')
         print(f'[{index}] {cwd.name}: {" ".join(command)}', flush=True)
-        result = subprocess.run(command, cwd=cwd, env=env, text=True,
-                                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        infrastructure_error = False
+        try:
+            result = subprocess.run(command, cwd=cwd, env=env, text=True,
+                                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                                    timeout=600)
+            output, code = result.stdout, result.returncode
+        except (OSError, subprocess.TimeoutExpired) as error:
+            partial = getattr(error, 'stdout', None) or ''
+            if isinstance(partial, bytes):
+                partial = partial.decode(errors='replace')
+            output, code = partial + '\n' + str(error), -1
+            infrastructure_error = True
         log = f'{index:03d}-{Path(command[0]).name}.log'
-        (self.output / log).write_text(result.stdout)
-        self.records.append(dict(command=command, cwd=str(cwd), exit=result.returncode,
-                                 expected_failure=fails, log=log))
-        if (result.returncode == 0) == fails:
-            raise RuntimeError(f'Unexpected exit {result.returncode}; see {self.output / log}\n'
-                               + result.stdout[-4000:])
-        return result.stdout
+        (self.output / log).write_text(output)
+        self.records.append(dict(command=command, cwd=str(cwd), exit=code,
+                                 expected_failure=fails, phase=phase, log=log))
+        if infrastructure_error or (code == 0) == fails:
+            consumer = 'flutter' if command[0] == 'flutter' else 'dart'
+            category = ('infrastructure' if infrastructure_error else
+                        classify_failure(phase, consumer, output))
+            self.records[-1]['category'] = category
+            raise VerificationFailure(category, f'Unexpected exit {code}; see {self.output / log}\n'
+                                      + output[-4000:])
+        return output
 
 
 class PackageServer(http.server.ThreadingHTTPServer):
@@ -178,10 +205,15 @@ def verify_consumer(runner, source, destination, version, env, scratch, runtime_
     if 'factory_generator' in spec.get('dev_dependencies', {}):
         generated = {p.relative_to(destination): p.read_bytes() for p in destination.rglob('*.factory.dart')}
         runner.run(['dart', 'run', 'build_runner', 'build'], destination, env)
+        runner.records[-1]['generated_before'] = {str(p): digest(data) for p, data in generated.items()}
+        runner.records[-1]['generated_after'] = {
+            str(p.relative_to(destination)): digest(p.read_bytes())
+            for p in destination.rglob('*.factory.dart')}
         for path, previous in generated.items():
-            if (destination / path).read_bytes() != previous:
-                raise RuntimeError(f'Generated drift: {path}')
-        runner.run([executable, 'test'], destination, env)
+            if runner.records[-1]['generated_after'].get(str(path)) != digest(previous):
+                raise VerificationFailure('generation', f'Generated drift: {path}')
+        runner.run([executable, 'analyze'], destination, env, phase='generated-analysis')
+        runner.run([executable, 'test'], destination, env, phase='generated-test')
 
 
 def verify_history():
@@ -406,6 +438,12 @@ def main():
                     with tarfile.open(archives / f'{name}.tar.gz') as archive:
                         archive.extractall(package, filter='data')
                     executable = 'flutter' if name == 'factory_provider' else 'dart'
+                    # The bundled example uses the optional generator's newer
+                    # SDK; resolve the archive's own runtime independently.
+                    # Flutter 3.19's wrapper still prepares example tooling with
+                    # --no-example; bundled Dart runs only Pub's resolver.
+                    runner.run(['dart', 'pub', 'get', '--no-example'], package, env)
+                    runner.records[-1]['resolved_packages'] = manifest(package / 'pubspec.lock')['packages']
                     runner.run([executable, 'pub', 'publish', '--dry-run'], package, env)
                     runner.run([executable, 'test', *(['--no-pub'] if executable == 'flutter' else [])], package, env)
                     runner.run([executable, 'analyze', *(['--no-pub'] if executable == 'flutter' else []), 'lib', 'test'], package, env)
@@ -443,6 +481,7 @@ def main():
                 server.server_close()
     except Exception as error:
         evidence['error'] = str(error)
+        evidence['failure_category'] = getattr(error, 'category', 'verification')
         raise
     finally:
         (args.output / 'evidence.json').write_text(json.dumps(evidence, indent=2) + '\n')

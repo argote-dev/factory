@@ -440,7 +440,9 @@ def main():
                     executable = 'flutter' if name == 'factory_provider' else 'dart'
                     # The bundled example uses the optional generator's newer
                     # SDK; resolve the archive's own runtime independently.
-                    runner.run([executable, 'pub', 'get', '--no-example'], package, env)
+                    # Flutter 3.19's wrapper still prepares example tooling with
+                    # --no-example; bundled Dart runs only Pub's resolver.
+                    runner.run(['dart', 'pub', 'get', '--no-example'], package, env)
                     runner.records[-1]['resolved_packages'] = manifest(package / 'pubspec.lock')['packages']
                     runner.run([executable, 'pub', 'publish', '--dry-run'], package, env)
                     runner.run([executable, 'test', *(['--no-pub'] if executable == 'flutter' else [])], package, env)

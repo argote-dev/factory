@@ -438,7 +438,9 @@ def main():
                     with tarfile.open(archives / f'{name}.tar.gz') as archive:
                         archive.extractall(package, filter='data')
                     executable = 'flutter' if name == 'factory_provider' else 'dart'
-                    runner.run([executable, 'pub', 'get'], package, env)
+                    # The bundled example uses the optional generator's newer
+                    # SDK; resolve the archive's own runtime independently.
+                    runner.run([executable, 'pub', 'get', '--no-example'], package, env)
                     runner.records[-1]['resolved_packages'] = manifest(package / 'pubspec.lock')['packages']
                     runner.run([executable, 'pub', 'publish', '--dry-run'], package, env)
                     runner.run([executable, 'test', *(['--no-pub'] if executable == 'flutter' else [])], package, env)

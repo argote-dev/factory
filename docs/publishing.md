@@ -129,3 +129,7 @@ investigation; the command log establishes the actual cause. Integrity and other
 verifier failures use `verification`. Missing executables and command timeouts
 retain diagnostics and cannot satisfy an expected-failure probe. Consumers are
 analyzed and tested both before and after regeneration.
+
+Archive dependency resolution uses `pub get --no-example`: the bundled example
+requires the optional generator's SDK, independently of the runtime minimum.
+The example is built and tested separately by the current-SDK package jobs.

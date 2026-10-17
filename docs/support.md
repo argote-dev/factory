@@ -16,8 +16,8 @@ Runtime minimums are retained throughout 1.x. Generator SDK changes follow the
 minimums are separate: the runtime verification job fixes Provider to its lower
 bound, while generator verification records the resolved build dependencies.
 
-Flutter 3.41.0 cannot resolve the current generator: its `meta 1.17.0` SDK pin
-conflicts with analyzer 10.2 requiring `meta >=1.18.0`. Runtime-only applications
+Flutter 3.41.0 cannot resolve the 1.0.1 generator: its `meta 1.17.0` SDK pin
+conflicts with analyzer 14.5 requiring `meta ^1.18.3`. Runtime-only applications
 can keep existing generated output without installing the generator. Do not use
 dependency overrides to bypass this conflict.
 

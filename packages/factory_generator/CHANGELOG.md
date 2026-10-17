@@ -1,3 +1,9 @@
+## 1.0.1
+
+- Update optional generation to analyzer 14.5, build 5, source_gen 4.3.1,
+  build_runner 2.17.1 and build_test 3.5.23.
+- Preserve generated module output, public API and Dart 3.11 minimum.
+
 ## 1.0.0
 
 - Stabilize the existing 0.3 public API as Factory 1.0.0.
